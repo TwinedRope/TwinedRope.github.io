@@ -1,0 +1,13 @@
+.over-texted, .over-obfuscated {
+    display: inline-block;
+    width: calc(100% - 64px);
+    margin: 0px 0px 0px 16px;
+    font-family: monospace;
+    font-size: 20px;
+    color: white;
+    margin-top: 0px;
+}
+
+.warn {
+    color: #fa0;
+}

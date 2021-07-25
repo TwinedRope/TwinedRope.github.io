@@ -1,0 +1,251 @@
+body {
+    background-image: url("Images/300px-Command_block_textures.png");
+    padding: 0px;
+    margin: 0px;
+}
+.whiteout {
+    background-color: rgba(25, 25, 25, 0.75);
+    padding: 10px;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+.page-wrapper {
+    padding: 10px;
+}
+
+h1 {
+    color: white;
+    font-family: monospace;
+    font-size: 35px;
+    text-shadow: 5px 5px black;
+}
+textarea {
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 30px;
+    width: 100%;
+    height: 50px;
+    word-wrap: break-word;
+    border: 3px solid darkgray;
+}
+
+label {
+    font-family: monospace;
+    font-size: 25px;
+    color: darkgrey;
+    text-shadow: 3px 3px black;
+    display: block;
+}
+
+button {
+    background-color: rgb(109, 109, 109);
+    font-family: monospace;
+    font-size: 20px;
+    color: white;
+    padding: 10px 50px;
+    text-shadow: 2px 2px black;
+    border-bottom: 5px solid rgb(75, 75, 75);
+    width: auto;
+}
+
+table {
+    /*border: 1px solid red;*/
+    width: 100%;
+}
+
+a {
+    display: inline-block;
+    text-decoration: underline;
+    color:#55ffff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 17px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+h2{
+    color: white;
+    font-family: monospace;
+    font-size: 30px;
+    display: inline-block;
+    text-shadow: 4px 4px black;
+}
+
+p {
+    display: block;
+    font-family: monospace;
+    font-size: 20px;
+    color: white;
+    margin-top: 0px;
+}
+
+.button {
+    display: inline-block;
+    border: 3px solid black;
+    margin: 11px 1px;
+}
+
+.button:hover {
+    border: 4px solid white;
+    margin: 10px 0px;
+}
+
+.option {
+    display: inline-grid;
+    padding: 0px;
+    margin: 1px 1px;
+    width: 95%;
+}
+
+.option:hover {
+    border: 4px solid white;
+    margin: 0px 0px;
+}
+
+.option button {
+    padding: 10px 0px;
+}
+
+.hidden {
+    display: none;
+}
+
+.selected-color, .selected, div.selected-format {
+    border: 4px solid #55ffff;
+    margin: 0px 0px;
+}
+
+.current-output, .tellraw-output {
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 30px;
+    max-width: 100%;
+    min-height: 35px;
+    height: auto;
+    word-wrap: normal;
+    border: 3px solid darkgray;
+    padding: 5px 0px;
+    max-width: 1154px; /*Minecraft Accuracy*/
+}
+
+.tellraw-output {
+    max-width: 100%;
+}
+
+.current-output > span {
+    text-shadow: 1px 1px 0px #444;
+}
+
+.textarea {
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 30px;
+    width: 100%;
+    height: 50px;
+    word-wrap: normal;
+    border: 3px solid darkgray;
+}
+
+.checkbox {
+    display: inline-block;
+    border: 3px solid black;
+    background-color: rgb(109, 109, 109);
+    margin-left: 5px;
+    padding: 1px 1px 1px 0px;
+    cursor: pointer;
+}
+
+.checkbox input {
+    padding: 10px 0px;
+    cursor: pointer;
+}
+
+.checkbox:hover {
+    border: 3px solid white;
+}
+
+.text-triggered-checkbox-hover {
+    border: 3px solid white;
+}
+
+.check-text {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 50px;
+}
+
+.tellraw-output {
+    width: 100%;
+}
+
+.bold {
+    font-weight: 900;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.underline {
+    border-bottom: 3px solid;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.obfuscated {
+    text-decoration: wavy;
+    /*handling deffered*/
+}
+
+.enchanted {
+    text-decoration: dashed;
+    /*handling deffered*/
+}
+
+.space {
+    padding: 0px 9.01px;
+    width: 0px;
+}
+
+.cursor-selected {
+    margin: -1px;
+    z-index: 1;
+}
+
+.click-event {
+    cursor: pointer;
+}
+
+/*td, tr {
+    border: 1px solid red;
+}*/
+
+.hover-box {
+    background-color: black;
+    padding: 3px;
+    border-radius: 7px;
+    color: white;
+    font-family: Courier, monospace;
+    font-size: 30px;
+    position: absolute;
+    max-width: 433px; /*Minecraft accuracy*/
+}
+
+.hover-box-inner {
+    border: 3px solid #38177b;
+    border-radius: 5px;
+    padding: inherit;
+}
+
+.warning-tnt {
+    display: none;
+    width: 32px;
+    height: 32px;
+}

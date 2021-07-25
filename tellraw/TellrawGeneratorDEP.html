@@ -1,19 +1,14 @@
 <html>
+    <link rel="stylesheet" href="TellrawGenerator.css">
+    <script type="text/javascript" src="TellrawGenerator.js"></script>
+    <script type="text/javascript" src="ExplanationToggles.js"></script>
+    <script type="text/javascript" src="General.js"></script>
+    <script type="text/javascript" src="Colors.js"></script>
     <head>
-        <link rel="stylesheet" href="TellrawGenerator.css">
-        <link rel="stylesheet" href="Warnings.css">
-        <script type="text/javascript" src="TellrawGenerator.js"></script>
-        <script type="text/javascript" src="ExplanationToggles.js"></script>
-        <script type="text/javascript" src="General.js"></script>
-        <script type="text/javascript" src="Colors.js"></script>
-        <script type="text/javascript" src="Constants.js"></script>
-        <script type="text/javascript" src="Events.js"></script>
-        <script type="text/javascript" src="Format.js"></script>
-        <script type="text/javascript" src="Warnings.js"></script>
-        <title>Tellraw Generator - A Twined_Rope Tool</title>
+        <title>Tellraw Generator</title>
         <link rel="icon" href="Images/icon2.png">
     </head>
-    <body onload="Initialize();" onresize="UpdateOutputBoxWidth()">
+    <body onload="//Initialize();" onresize="//RecalculateOutput();">
         <div class="whiteout"></div>
         <div class="page-wrapper">
             <!--Image storage for canvases (prevents security issues when getting ImageData on chrome and edge)-->
@@ -31,47 +26,20 @@
                 <img id="enchanted05" src="Images/Enchanted05.PNG">
                 <br>
                 <img id="enchanted06" src="Images/Enchanted06.PNG">
-                <br>
-                <img id="enchanted00Bold" src="Images/Enchanted00Bold.PNG">
-                <br>
-                <img id="enchanted01Bold" src="Images/Enchanted01Bold.PNG">
-                <br>
-                <img id="enchanted02Bold" src="Images/Enchanted02Bold.PNG">
-                <br>
-                <img id="enchanted03Bold" src="Images/Enchanted03Bold.PNG">
-                <br>
-                <img id="enchanted04Bold" src="Images/Enchanted04Bold.PNG">
-                <br>
-                <img id="enchanted05Bold" src="Images/Enchanted05Bold.PNG">
-                <br>
-                <img id="enchanted06Bold" src="Images/Enchanted06Bold.PNG">
-            </div>
-            <div style="position: absolute; left: -1692px;" id="image-holder">
-                <img id="obfuscated00" src="Images/ObfuscatedFrames.PNG">
-                <br>
-                <img id="obfuscated00Bold" src="Images/ObfuscatedFramesBold.png">
-                <br>
             </div>
 
             <h1 style="display: inline-block;">
                 Tellraw Generator
             </h1>
             <a style="display:inline-block;" onclick="ToggleExp(2, event)">show explanation</a>
-            <p class="hidden" id="2">Type in the box below and click on the options further below to create colorful text. Then click the submit button to generate the /tellraw command for the text you entered. Note that Minecraft does not accept all characters, and this generator does not prevent you from typing invalid Minecraft characters, so be sure to test each one. Also note that Minecraft will accept certain escape characters ("\b" for example), but these are often output incorrectly in-game (excluding "\n", "\\", "\"", and "\'").<br><br>Note that highlighting text, then clicking and dragging that selection around is not supported and will create issues with this system. Undo is also currently not supported.</p>
-            <div class="warning-container">
-                <img src="Images/TNT.jpg" alt="tnt lag timer" class="warning-tnt" title="JavaScript performance indicator: should blink once a second">
-                <ul style="position: relative; top: -55px;">
-                    <li class="over-texted" style="display: none;"><span class="warn">WARNING</span>: More than 800 characters have been entered. Performance is impacted</li>
-                    <li class="over-obfuscated" style="display: none;"><span class="warn">WARNING</span>: More than 100 obfuscated characters have been entered. Performance is impacted. <a onclick="ToggleObfuscatedAnimation()">Toggle Obfuscated Animation</a></li>
-                </ul>
-            </div>
+            <p class="hidden" id="2">Type in the box below and click on the options further below to create colorful text. Then click the submit button to generate the /tellraw command for the text you entered. Note that Minecraft does not accept all characters, and this generator does not prevent you from typing invalid Minecraft characters, so be sure to test each one. Also note that "enters" (or newline characters) cannot be created in 1 /tellraw command, so multiple commands will be output upon submitting text with newline characters.<br><br>Note that highlighting text, then clicking and dragging that selection around is not supported and will create issues with this system.</p>
             <label>
                 <strong>
                 Input text to be converted to a tellraw command:
                 </strong>
                 <p id="obfWarning" style="display: none; color: #ffff55;"> WARNING: performance decreased from obfuscated text. <a onclick="ToggleObfuscatedAnimation()">Toggle Animation</a></p>
             </label>
-            <textarea id="input" oninput="CalculateOutput(event)" onclick="UpdateCursorPositionClick(event)" onkeyup="KeyUpEventUpdate(event)" onkeydown="KeyDownEventUpdate(event)" onfocus="FocusEventHighlight(event)" onselect="HandleOutputSelection(event)"></textarea>
+            <textarea id="input" onclick="UpdateinputIndex(event)" onselect="UpdateSelectionVars(event)" oninput="UpdateInput(event)" onmousedown="UpdateinputIndex(event)" onkeyup="OnlyIfArrows(event)"></textarea>
             <!--UI Options-->
             <div class="button selected task">
                 <button onclick="Select(event, 'task', 'content', 'single-tellraw')">
@@ -111,7 +79,6 @@
                 </div>
                 </div>
                 <div style="display: inline-block;" id="click-notification-box"></div>
-                <div style="display: inline-block;" id="hover-notification-box"></div>
                 <div style="display:block;"></div>
                 <h2>Colors</h2>
                 <a onclick="ToggleExp(1, event)">show explanation</a>
@@ -122,57 +89,57 @@
                 <table>
                     <tr>
                         <td>
-                            <div class="button option color Red">
-                                <button onclick="ColorButton(event)" style="color: #ff5555">
+                            <div class="button option color">
+                                <button onclick="Color('red', event)" style="color: #ff5555">
                                     Red
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color Yellow">
-                                <button onclick="ColorButton(event)" style="color: #ffff55">
+                            <div class="button option color">
+                                <button onclick="Color('yellow', event)" style="color: #ffff55">
                                     Yellow
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color Green">
-                                <button onclick="ColorButton(event)" style="color: #55ff55">
+                            <div class="button option color">
+                                <button onclick="Color('green', event)" style="color: #55ff55">
                                     Green
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color Blue">
-                                <button onclick="ColorButton(event)" style="color: #5555ff">
+                            <div class="button option color">
+                                <button onclick="Color('blue', event)" style="color: #5555ff">
                                     Blue
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color Aqua">
-                                <button onclick="ColorButton(event)" style="color: #55ffff">
+                            <div class="button option color">
+                                <button onclick="Color('aqua', event)" style="color: #55ffff">
                                     Aqua
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color LightPurple">
-                                <button onclick="ColorButton(event)" style="color: #ff55ff">
+                            <div class="button option color">
+                                <button onclick="Color('light_purple', event)" style="color: #ff55ff">
                                     Light Purple
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color Gray">
-                                <button onclick="ColorButton(event)" style="color: #aaaaaa">
+                            <div class="button option color">
+                                <button onclick="Color('gray', event)" style="color: #aaaaaa">
                                     Gray
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color White selected-color">
-                                <button onclick="ColorButton(event)" style="color: #ffffff">
+                            <div class="button option color selected-color">
+                                <button onclick="Color('white', event)" style="color: #ffffff">
                                     White
                                 </button>
                             </div>
@@ -180,57 +147,57 @@
                     </tr>
                     <tr>
                         <td>
-                            <div class="button option color DarkRed">
-                                <button onclick="ColorButton(event)"  style="color: #AA0000">
+                            <div class="button option color">
+                                <button onclick="Color('dark_red', event)"  style="color: #AA0000">
                                     Dark Red
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color Gold">
-                                <button onclick="ColorButton(event)" style="color: #ffaa00">
+                            <div class="button option color">
+                                <button onclick="Color('gold', event)" style="color: #ffaa00">
                                     Gold
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color DarkGreen">
-                                <button onclick="ColorButton(event)" style="color: #00aa00">
+                            <div class="button option color">
+                                <button onclick="Color('dark_green', event)" style="color: #00aa00">
                                     Dark Green
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color DarkBlue">
-                                <button onclick="ColorButton(event)" style="color: #0000aa">
+                            <div class="button option color">
+                                <button onclick="Color('dark_blue', event)" style="color: #0000aa">
                                     Dark Blue
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color DarkAqua">
-                                <button onclick="ColorButton(event)" style="color: #00aaaa">
+                            <div class="button option color">
+                                <button onclick="Color('dark_aqua', event)" style="color: #00aaaa">
                                     Dark Aqua
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color DarkPurple">
-                                <button onclick="ColorButton(event)" style="color: #aa00aa">
+                            <div class="button option color">
+                                <button onclick="Color('dark_purple', event)" style="color: #aa00aa">
                                     Dark Purple
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color DarkGray">
-                                <button onclick="ColorButton(event)" style="color: #555555">
+                            <div class="button option color">
+                                <button onclick="Color('dark_gray', event)" style="color: #555555">
                                     Dark Gray
                                 </button>
                             </div>
                         </td>
                         <td>
-                            <div class="button option color Black">
-                                <button onclick="ColorButton(event)" style="color: #000000">
+                            <div class="button option color">
+                                <button onclick="Color('black', event)" style="color: #000000">
                                     Black
                                 </button>
                             </div>
@@ -244,15 +211,14 @@
                 <a onclick="ToggleExp(3, event)">show explanation</a>
                 <a onclick="ShowHide(6, event)" style="float: right; margin-top:38px; padding-right: 19px">hide</a>
                 <div style="display:block;""></div>
-                <p class="hidden" id="3">Highlight a part of the text you want to add an event to, then enter the command or text that should be attached to your event, and click the add buttons to add it. The event that your cursor is currently on will be populated in the text fields below, at which point you can edit your events, and confirm your edit by clicking the add buttons. If you do not highlight any text and attempt to add an event, the event will be added to the letter your cursor is on and to any adjacent letters of the same color and format.
-                    <br><br>You can remove events by moving your cursor to an event and clicking remove, which will remove any adjacent events of the same value. Alternatively, you can remove an event by moving your cursor to the event, deleting the text or command that will appear in the text entries below, and then confirming the edit (this will remove any adjacent event of the same value).</p>
+                <p class="hidden" id="3">First enter the desired command or text in the Click Event and Hover Event's boxes respectively. Then highlight a part of your input above, and click the buttons below to add that event to that part of the text (you can remove events in the same way). Alternatively, you can position your cursor at colored text, and that grouping of colored text will recieve the event. You can edit events by moving your cursor to text with an event, modifiying the event inputs, and then re-clicking the button to add an event (no highlight required). You can preview the events by clicking or hovering over the text in the "Current Output" box below. Note that a piece of text can have 1 click event and/or 1 hover event. Note that commands input to the click event field are NOT checked for Minecraft syntax errors.</p>
                 <div style="display: block;"></div>
                 <div id="6">
                 <table>
                     <tr>
                         <td>
                             <div class="button" style="width: 95%;">
-                                <button style="width: 100%;" onclick="AddEvent('click')">
+                                <button style="width: 100%;" onclick="AddClickEvent()">
                                     Add Click Event
                                 </button>
                             </div>
@@ -265,7 +231,7 @@
                         </td>
                         <td>
                             <div class="button" style="width: 95%;">
-                                <button style="width: 100%;" onclick="RemoveEvent('click')">
+                                <button style="width: 100%;" onclick="RemoveClickEvent()">
                                     Remove
                                 </button>
                             </div>
@@ -273,7 +239,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <div class="button" style="width: 95%;" onclick="AddEvent('hover')">
+                            <div class="button" style="width: 95%;" onclick="AddHoverEvent()">
                                 <button style="width: 100%;">
                                     Add Hover Event
                                 </button>
@@ -287,7 +253,7 @@
                         </td>
                         <td>
                             <div class="button" style="width: 95%;">
-                                <button style="width: 100%;" onclick="RemoveEvent('hover')">
+                                <button style="width: 100%;" onclick="RemoveHoverEvent()">
                                     Remove
                                 </button>
                             </div>
@@ -295,11 +261,11 @@
                     </tr>
                 </table>
                 <div class="checkbox" onclick="TransferCheckboxClick('click-checkbox')">
-                    <input id="click-checkbox" type="checkbox" class="click" onclick="HighlightClickEvents(event);" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
+                    <input id="click-checkbox" type="checkbox" class="click" onclick="HighlightClickEvents();" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
                 </div>
                 <p class="check-text" style="color: darkgray; text-shadow: 3px 3px black; cursor: pointer;" onclick="TransferCheckboxClick('click-checkbox')" onmouseover="TransferCheckboxStyling('click-checkbox', true);" onmouseleave="TransferCheckboxStyling('click-checkbox', false);">Highlight Click Events in Output Frame</p>
                 <div class="checkbox" onclick="TransferCheckboxClick('hover-checkbox');">
-                    <input id="hover-checkbox" type="checkbox" onclick="HighlightHoverEvents(event);" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
+                    <input id="hover-checkbox" type="checkbox" onclick="HighlightHoverEvents();" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
                 </div>
                 <p class="check-text" style="color: darkgray; text-shadow: 3px 3px black; cursor: pointer;" onclick="TransferCheckboxClick('hover-checkbox')" onmouseover="TransferCheckboxStyling('hover-checkbox', true);" onmouseleave="TransferCheckboxStyling('hover-checkbox', false);">Highlight Hover Events in Output Frame</p>
                 </div>
@@ -309,56 +275,70 @@
                 </h2>
                 <a onclick="ToggleExp(4, event);">show explanation</a>
                 <a onclick="ShowHide(8, event)" style="float: right; margin-top:38px; padding-right: 19px">hide</a>
-                <p class="hidden" id="4">Click one of the formats below and start typing to input text of the selected format. Highlight part of your input and then click the below buttons to add desired formatting. You can remove formatting in the same way. Note that the enchanted text and obfuscated text (the 2 right-most options) are inacurate to Minecraft's text in-game, as there is a 1-to-1 translation in-game and a different randomization algorithm respectively. Current formatting for the text your cursor is on is highlighted below. You cannot remove the "No Formatting" format unless you add a format.</p>
+                <p class="hidden" id="4">Highlight part of your input and then click the below buttons to add desired special formatting. You can remove formatting in the same way. If you do not highlight, the formatting will be applied to (or removed from) the colored text that your cursor was on or any consecutive characters with the same formatting. Note that the enchanted text and obfuscated text (the 2 right-most options) are inacurate to Minecraft, as there is a 1-to-1 translation in-game and a different randomization algorithm respectively. Current formatting for the text your cursor is on is highlighted below. You cannot remove the "No Formatting" format unless you add a format.</p>
                 <div id="8">
                 <table>
                     <tr>
                         <td>
                             <div class="button option formatting selected-format">
-                                <button title="Clear Formatting" onclick="ClearFormatting(event);" name="none">
+                                <button title="Clear Formatting" onclick="ClearFormatting(event);">
                                     No Formatting
                                 </button>
                             </div>
                         </td>
                         <td>
                             <div class="button option formatting">
-                                <button style="font-weight: 900;" title="Bold Formatting" onclick="AddFormat(event, 0);" name="bold">
+                                <button style="font-weight: 900;" title="Bold Formatting" onclick="AddFormat(event, 0);">
                                     Bold
                                 </button>
                             </div>
                         </td>
                         <td>
                             <div class="button option formatting">
-                                <button style="font-style: italic;" title="Italic Formatting" onclick="AddFormat(event, 1);" name="italic">
+                                <button style="font-style: italic;" title="Italic Formatting" onclick="AddFormat(event, 1);">
                                     Italic
                                 </button>
                             </div>
                         </td>
                         <td>
                             <div class="button option formatting">
-                                <button style="text-decoration: underline;" title="Underline Formatting" onclick="AddFormat(event, 2);" name="underline">
+                                <button style="text-decoration: underline;" title="Underline Formatting" onclick="AddFormat(event, 2);">
                                     Underline
                                 </button>
                             </div>
                         </td>
                         <td>
                             <div class="button option formatting">
-                                <button style="text-decoration: line-through;" title="Strikethrough Formatting" onclick="AddFormat(event, 3);" name="strikethrough">
+                                <button style="text-decoration: line-through;" title="Strikethrough Formatting" onclick="AddFormat(event, 3);">
                                     Strikethrough
                                 </button>
                             </div>
                         </td>
                         <td>
                             <div class="button option formatting obfuscated">
-                                <button onclick="AddFormat(event, 4);" name="obfuscated">
-                                    <img src="Images\OfficialObfusscatedTransparent.gif" alt="Obfuscated Formatting" title="Obfuscated Formatting" onclick="TransferClickParent(event);" style="height: 23px; padding: 0px;">
+                                <button onclick="AddFormat(event, 4);">
+                                    <img src="Images\OfficialObfusscatedTransparent.gif" alt="Obfuscated Formatting" title="Obfuscated Formatting" style="height: 23px; padding: 0px;">
+                                    <!--
+                                        Each individual characer GIF: - Note that characters should be 18.02px across and 34px high
+                                        1.  https://i.imgur.com/EvFpeRZ.gif
+                                        2.  https://i.imgur.com/McVPHnf.gif
+                                        3.  https://i.imgur.com/3k27gCD.gif
+                                        4.  https://i.imgur.com/AUepQ5Q.gif
+                                        5.  https://i.imgur.com/UowPVU1.gif
+                                        6.  https://i.imgur.com/H95pFo7.gif
+                                        7.  https://i.imgur.com/VpMWtC0.gif
+                                        8.  https://i.imgur.com/VFwdKtQ.gif
+                                        9.  https://i.imgur.com/9LQNq6Z.gif
+                                        10. https://i.imgur.com/0YuzFwY.gif
+
+                                    -->
                                 </button>
                             </div>
                         </td>
                         <td>
                             <div class="button option formatting">
-                                <button onclick="AddFormat(event, 5);" name="enchanted"> <!--Note that the tellraw for this is "font":"minecraft:alt"-->
-                                    <img src="Images\Minecraft Alt Text.PNG" alt="Enchanted Formatting" title="Enchanted Formatting" onclick="TransferClickParent(event);" style="height: 15px; padding: 4px;"></img>
+                                <button onclick="AddFormat(event, 5);"> <!--Note that the tellraw for this is "font":"minecraft:alt"-->
+                                    <img src="Images\Minecraft Alt Text.PNG" alt="Enchanted Formatting" title="Enchanted Formatting" style="height: 15px; padding: 4px;"></img>
                                 </button>
                             </div>
                         </td>
@@ -391,7 +371,7 @@
                         </div>
                     </td>
                     <td style="padding-left: 10px;">
-                        <p style="display: inline-block;"><img src="Images/RedstoneTorch.png" alt="redstone torch" style="display: inline-block; width: 32px; position: relative; top: 3px">Pro Tip: This output is editable if you need a specific target or need this executed as a certain entity, and your edits will update the MCFUNCTION file download as well (edits here are not checked for Minecraft Syntax errors).</p>
+                        <p>Pro Tip: This output is editable if you need a specific target or need this executed as a certain entity, and your edits will update the MCFUNCTION file as well (edits here are not checked for Minecraft Syntax errors).</p>
                     </td>
                 </tr>
             </table>
@@ -409,7 +389,7 @@
                 </tr>
                 <tr>
                     <td style="padding: 0px 50px;">
-                        <p>#0000FF</p>
+                        <p>#000FF</p>
                     </td>
                     <td>
 
