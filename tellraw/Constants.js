@@ -36,6 +36,25 @@ const ColorDecodeHex = {
     '#ff5555': 'Red'
 }
 
+const ColorDecodeMC = {
+    '#ffffff': 'white',
+    '#000000': 'black',
+    '#aaaaaa': 'gray',
+    '#555555': 'dark_gray',
+    '#ff55ff': 'light_purple',
+    '#aa00aa': 'dark_purple',
+    '#00aaaa': 'dark_aqua',
+    '#55ffff': 'aqua',
+    '#0000aa': 'dark_blue',
+    '#5555ff': 'blue',
+    '#00aa00': 'dark_green',
+    '#55ff55': 'green',
+    '#ffaa00': 'gold',
+    '#ffff55': 'yellow',
+    '#aa0000': 'dark_red',
+    '#ff5555': 'red'
+}
+
 const Format = {
     'bold': 0,
     'italic': 1, 
