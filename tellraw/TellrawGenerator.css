@@ -61,8 +61,7 @@ a {
     text-decoration: underline;
     color:#55ffff;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 17px;
-    margin-left: 20px;
+    font-size: 20px;
     cursor: pointer;
 }
 
@@ -191,7 +190,7 @@ p {
     font-style: italic;
 }
 
-.underline {
+.underlined {
     border-bottom: 3px solid;
 }
 
@@ -248,4 +247,11 @@ p {
     display: none;
     width: 32px;
     height: 32px;
+}
+
+.enchanted-book-icon {
+    width: 32px;
+    margin-left: 20px;
+    position: relative;
+    top: 10px;
 }

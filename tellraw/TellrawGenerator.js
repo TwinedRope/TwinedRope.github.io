@@ -21,6 +21,7 @@ var lastSelection = {
 };
 
 function Initialize() {
+    document.querySelector('a').click();
     outputBox = document.getElementsByClassName("current-output")[0];
     outputBoxWidth = outputBox.clientWidth;
     InitEvents();
@@ -65,10 +66,12 @@ function TranslateToHTML(item, index) {
     const _hoverEventHandler = item.event[1] == undefined ? '' : 'onmouseover="ShowHoverEvent(event, ' + index + ')" onmouseout="RemoveShowHoverEvent()" ';
     const _format = item.format.toString().replaceAll(",", " ");
     if((cursorPosition == 0 && index == 0 || cursorPosition - 1 == index && lastSelection.length == 0) || IsInLastSelection(index)) {
-        HTMLString = "<span " + _clickEventHandler + _hoverEventHandler + " class=\"" + _space + _clickEvent + _hoverEvent + _format + " cursor-selected\" style=\"border: 1px solid " + item.color + "; color: " + item.color + ";\">" + _letter + "</span>";
+        HTMLString = "<span index=" + index + " " + _clickEventHandler + _hoverEventHandler + " class=\"" + _space + _clickEvent + _hoverEvent + _format + " cursor-selected\" style=\"border: 1px solid " + item.color + "; color: " + item.color + ";\">" + _letter + "</span>";
     } else {
-        HTMLString = "<span " + _clickEventHandler + _hoverEventHandler + "class=\"" + _space + _clickEvent + _hoverEvent + _format + "\" style=\"color: " + item.color + ";\">" + _letter + "</span>";
+        HTMLString = "<span index=" + index + " " + _clickEventHandler + _hoverEventHandler + "class=\"" + _space + _clickEvent + _hoverEvent + _format + "\" style=\"color: " + item.color + ";\">" + _letter + "</span>";
     }
+    if(item.val == "\n")
+        outputHTMLString += '<br>';
     outputHTMLString += HTMLString; //kept in string type for performance reasons
 }
 
@@ -207,4 +210,16 @@ function InterceptCTRLA(event) {
 function TransferClickParent(event) {
     event.preventDefault();
     event.target.parentElement.click();
+}
+
+function CopyTellrawOutput() {
+    /* Get the text field */
+  var copyText = document.getElementsByClassName("tellraw-output")[0];
+
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
 }

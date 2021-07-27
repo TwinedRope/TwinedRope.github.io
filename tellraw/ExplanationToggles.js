@@ -3,7 +3,6 @@ var expToggles = new Array();
 function ToggleExp(id) {
     while(id >= expToggles.length) {
         expToggles.push(false);
-        console.log("added false");
     }
     
     if(expToggles[id]) {
@@ -22,7 +21,6 @@ var showHideToggles = new Array();
 function ShowHide(id, event) {
     while(id >= showHideToggles.length) {
         showHideToggles.push(true);
-        console.log("added false");
     }
     
     if(showHideToggles[id]) {

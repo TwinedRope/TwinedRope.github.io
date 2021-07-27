@@ -57,8 +57,9 @@
             <h1 style="display: inline-block;">
                 Tellraw Generator
             </h1>
+            <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
             <a style="display:inline-block;" onclick="ToggleExp(2, event)">show explanation</a>
-            <p class="hidden" id="2">Type in the box below and click on the options further below to create colorful text. Then click the submit button to generate the /tellraw command for the text you entered. Note that Minecraft does not accept all characters, and this generator does not prevent you from typing invalid Minecraft characters, so be sure to test each one. Also note that Minecraft will accept certain escape characters ("\b" for example), but these are often output incorrectly in-game (excluding "\n", "\\", "\"", and "\'").<br><br>Note that highlighting text, then clicking and dragging that selection around is not supported and will create issues with this system. Undo is also currently not supported.</p>
+            <p class="hidden" id="2">Type in the box below and click on the options further below to create colorful text. Then click the submit button to generate the /tellraw command for the text you entered. Note that Minecraft does not accept all characters, and this generator does not prevent you from typing invalid Minecraft characters, so be sure to test each one. Also note that Minecraft will accept certain escape characters ("\b" for example), but these are often output incorrectly in-game (excluding "\\") (For \n, \", and \', simply input an enter, ", or ' charcater respectively").<br><br>Note that highlighting text, then clicking and dragging that selection around is not supported and will create issues with this system. Undo is also currently not supported.</p>
             <div class="warning-container">
                 <img src="Images/TNT.jpg" alt="tnt lag timer" class="warning-tnt" title="JavaScript performance indicator: should blink once a second">
                 <ul style="position: relative; top: -55px;">
@@ -74,17 +75,18 @@
             </label>
             <textarea id="input" oninput="CalculateOutput(event)" onclick="UpdateCursorPositionClick(event)" onkeyup="KeyUpEventUpdate(event)" onkeydown="KeyDownEventUpdate(event)" onfocus="FocusEventHighlight(event)" onselect="HandleOutputSelection(event)"></textarea>
             <!--UI Options-->
-            <div class="button selected task">
+            <!--Hidden until I can figure out a public way to output MCFunction files-->
+            <div class="button selected task" style="display: none">
                 <button onclick="Select(event, 'task', 'content', 'single-tellraw')">
                     Single Tellraw Output
                 </button>
             </div>
-            <div class="button task">
+            <div class="button task" style="display: none;">
                 <button onclick="Select(event, 'task', 'content', 'full-dialogue')">
                     Full Dialogue Output
                 </button>
             </div>
-            <div class="button task">
+            <div class="button task" style="display: none">
                 <button onclick="Select(event, 'task', 'content', 'decode-tellraw')">
                     Input /tellraw Code
                 </button>
@@ -115,6 +117,7 @@
                 <div style="display: inline-block;" id="hover-notification-box"></div>
                 <div style="display:block;"></div>
                 <h2>Colors</h2>
+                <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
                 <a onclick="ToggleExp(1, event)">show explanation</a>
                 <a onclick="ShowHide(5, event)" style="float: right; margin-top:38px; padding-right: 19px">hide</a>
                 <div style="display:block;""></div>
@@ -242,6 +245,7 @@
                 <h2>
                     Events
                 </h2>
+                <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
                 <a onclick="ToggleExp(3, event)">show explanation</a>
                 <a onclick="ShowHide(6, event)" style="float: right; margin-top:38px; padding-right: 19px">hide</a>
                 <div style="display:block;""></div>
@@ -308,6 +312,7 @@
                 <h2>
                     Special Formatting
                 </h2>
+                <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
                 <a onclick="ToggleExp(4, event);">show explanation</a>
                 <a onclick="ShowHide(8, event)" style="float: right; margin-top:38px; padding-right: 19px">hide</a>
                 <p class="hidden" id="4">Click one of the formats below and start typing to input text of the selected format. Highlight part of your input and then click the below buttons to add desired formatting. You can remove formatting in the same way. Note that the enchanted text and obfuscated text (the 2 right-most options) are inacurate to Minecraft's text in-game, as there is a 1-to-1 translation in-game and a different randomization algorithm respectively. Current formatting for the text your cursor is on is highlighted below. You cannot remove the "No Formatting" format unless you add a format.</p>
@@ -337,7 +342,7 @@
                         </td>
                         <td>
                             <div class="button option formatting">
-                                <button style="text-decoration: underline;" title="Underline Formatting" onclick="AddFormat(event, 2);" name="underline">
+                                <button style="text-decoration: underline;" title="Underline Formatting" onclick="AddFormat(event, 2);" name="underlined">
                                     Underline
                                 </button>
                             </div>
@@ -377,14 +382,14 @@
             <textarea class="tellraw-output"></textarea>
             <table>
                 <tr>
-                    <td style="width: 20%;">
+                    <td style="width: 15%;"> <!--Previously 20%-->
                         <div class="button">
-                            <button>
+                            <button onclick="CopyTellrawOutput()">
                                 Copy to Clipboard
                             </button>
                         </div>
                     </td>
-                    <td style="width: 25%;">
+                    <td style="width: 25%; display: none;">
                         <div class="button">
                             <button>
                                 Download MCFUNCTION File

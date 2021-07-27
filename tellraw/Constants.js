@@ -64,7 +64,7 @@ const Format = {
     'enchanted': 5
 }
 
-const FormatArr = ["bold", "italic", "underline", "strikethrough", "obfuscated", "enchanted"];
+const FormatArr = ["bold", "italic", "underlined", "strikethrough", "obfuscated", "enchanted"];
 
 const RelevantKeyCodes = {
     PageUp: 33,

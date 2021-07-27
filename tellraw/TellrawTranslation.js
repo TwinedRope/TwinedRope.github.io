@@ -9,6 +9,8 @@ function Submit() {
     InitTellrawObject(lastOutputObject);
     TranslateToTellrawArray(1);
     tellrawArray.forEach(TellrawOutput);
+    tellrawOutput += ']}';
+    document.getElementsByClassName("tellraw-output")[0].value = tellrawOutput;
 }
 
 function InitTellrawObject(initObj) {    
@@ -44,9 +46,15 @@ function EventsMatch(outputObj1, outputObj2) {
         return false;
     if(outputObj1.event.length == 0 && outputObj2.event.length == 0) {
         return true;
-    } else if(outputObj1.event[0] != undefined && outputObj2.event[0] != undefined && outputObj1.event[0].clickEvent == outputObj2.event[0].clickEvent && outputObj1.event[0].value == outputObj2.event[0].value) {
+    }
+    if(outputObj1.event[0] != undefined && outputObj2.event[0] != undefined && outputObj1.event[0].clickEvent == outputObj2.event[0].clickEvent && outputObj1.event[0].value == outputObj2.event[0].value) {
         clickEventsMatch = true;
-    } else if(outputObj1.event[1] != undefined && outputObj2.event[1] != undefined && outputObj1.event[1].clickEvent == outputObj2.event[1].clickEvent && outputObj1.event[1].value == outputObj2.event[1].value) {
+    } else if(outputObj1.event[0] == undefined && outputObj2.event[0] == undefined) {
+        clickEventsMatch = true;
+    }
+    if(outputObj1.event[1] != undefined && outputObj2.event[1] != undefined && outputObj1.event[1].clickEvent == outputObj2.event[1].clickEvent && outputObj1.event[1].value == outputObj2.event[1].value) {
+        hoverEventsMatch = true;
+    } else if(outputObj1.event[1] == undefined && outputObj2.event[1] == undefined) {
         hoverEventsMatch = true;
     }
     return (clickEventsMatch && hoverEventsMatch);
@@ -72,24 +80,26 @@ function TellrawOutput(item, index) {
     } else {
         TellrawNodeOutput(item, false);
     }
-    tellrawOutput += ']}';
-    document.getElementsByClassName("tellraw-output")[0].value = tellrawOutput;
 }
 
 function TellrawNodeOutput(item, first) {
     if(!first)
         tellrawOutput += ',';
-    tellrawOutput += '{"text":"' + item.value + '","color":"' + item.color + '"';
+    tellrawOutput += '{"text":"' + item.value.replace(/\n/g, "\\n").replace(/"/g, "\\\"") + '","color":"' + item.color + '"';
     if(item.events.length != 0) {
         if(item.events[0] != undefined) {
-            tellrawOutput += ',"clickEvent":{"action":"run_command", "value":"' + item.events[0].value + '"}';
+            tellrawOutput += ',"clickEvent":{"action":"run_command", "value":"' + item.events[0].value.replace(/\n/g, "\\n").replace(/"/g, "\\\"") + '"}';
         }
         if(item.events[1] != undefined) {
-            tellrawOutput += ',"hoverEvent":{"action":"show_text", "value":"' + item.events[1].value + '"}';
+            tellrawOutput += ',"hoverEvent":{"action":"show_text", "value":"' + item.events[1].value.replace(/\n/g, "\\n").replace(/"/g, "\\\"") + '"}';
         }
     }
     for(var i = 0; i < item.format.length; i++) {
-        tellrawOutput += ',"' + format[i] + '":"true"';
+        if(item.format[i] == 'enchanted') {
+            tellrawOutput += ',"font":"minecraft:alt"';
+        } else {
+            tellrawOutput += ',"' + item.format[i] + '":"true"';
+        }
     }
     tellrawOutput += '}';
 }

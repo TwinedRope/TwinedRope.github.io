@@ -96,7 +96,11 @@ function EventHighlight(selection) {
 
 function UpdateCurrentEvents(type) {
     const eventIndex = type == 'click' ? 0 : 1;
-    currentEvents[eventIndex] = cursorPosition == 0 ? outputArray[cursorPosition].event[eventIndex] : outputArray[cursorPosition - 1].event[eventIndex];
+    if(lastSelection.length > 0) {
+        currentEvents[eventIndex] = outputArray[cursorPosition].event[eventIndex];
+    } else {
+        currentEvents[eventIndex] = cursorPosition == 0 ? outputArray[cursorPosition].event[eventIndex] : outputArray[cursorPosition - 1].event[eventIndex];
+    }
     if(currentEvents[eventIndex] == undefined && lastSelection.endIndex > 0)
         currentEvents[eventIndex] = outputArray[lastSelection.endIndex - 1].event[eventIndex];
     if(currentEvents[eventIndex] != undefined) {
@@ -193,7 +197,6 @@ function EventEdit(selection) {
 }
 
 function EventAddByFormatColor(selection) {
-    console.log("add by format/color");
     const eventIndex = eventAddFlag == 'click' ? 0 : 1;
     const newVal = document.getElementById(eventAddFlag + "-event-input").value;
     const newEvent = {

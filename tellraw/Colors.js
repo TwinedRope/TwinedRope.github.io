@@ -19,7 +19,11 @@ function ColorButton(event) {
 }
 
 function UpdateCurrentColor() {
-    currentColor = cursorPosition == 0 ? outputArray[cursorPosition].color : outputArray[cursorPosition - 1].color;
+    if(lastSelection.length > 0) {
+        currentColor = outputArray[cursorPosition].color;    
+    } else {
+        currentColor = cursorPosition == 0 ? outputArray[cursorPosition].color : outputArray[cursorPosition - 1].color;
+    }
     var buttonClass = ColorDecodeHex[currentColor];
     document.getElementsByClassName("selected-color")[0].classList.remove("selected-color");
     document.getElementsByClassName(buttonClass)[0].classList.add("selected-color");

@@ -80,7 +80,11 @@ function FormatHighlight(selection) {
 }
 
 function UpdateCurrentFormat() {
-    currentFormats = cursorPosition == 0 ? Array.from(outputArray[cursorPosition].format) : Array.from(outputArray[cursorPosition - 1].format);
+    if(lastSelection.length > 0) {
+        currentFormats = Array.from(outputArray[cursorPosition].format);
+    } else {
+        currentFormats = cursorPosition == 0 ? Array.from(outputArray[cursorPosition].format) : Array.from(outputArray[cursorPosition - 1].format);
+    }
     var buttons = document.querySelectorAll(".button.option.formatting > button");
     buttons.forEach(SetButtonActive);
     if(currentFormats.length == 0) {
@@ -104,7 +108,8 @@ function SetButtonActive(item, index) {
 function PostProcessFormats() {
     var enchantedText = document.querySelectorAll("span.enchanted");
     for(var i = 0; i < enchantedText.length; i++) {
-        ProcessEnchanted(enchantedText[i], i);
+        if(!enchantedText[i].classList.contains("space"))
+            ProcessEnchanted(enchantedText[i], enchantedText[i].getAttribute('index'));
     }
     //strict order; obfuscated overrides enchanted text
     PostProcessObfuscated();
@@ -115,7 +120,8 @@ function PostProcessObfuscated() {
     var obfuscatedText = document.querySelectorAll("span.obfuscated");
     numObfuscated = obfuscatedText.length;
     for(var i = 0; i < obfuscatedText.length; i++) {
-        ProcessObfuscated(obfuscatedText[i], i);
+        if(!obfuscatedText[i].classList.contains("space"))
+            ProcessObfuscated(obfuscatedText[i], obfuscatedText[i].getAttribute('index'));
     }
 }
 

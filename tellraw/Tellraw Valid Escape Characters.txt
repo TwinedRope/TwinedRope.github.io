@@ -1,0 +1,8 @@
+Valid Shortcodes:
+\t -> dotted-boxed HT
+\r -> dotted-boxed CR
+\\ -> backslash
+\f -> dotted-boxed FF
+\' -> quote
+\" -> double-quote
+\b -> dotted-boxed BS
