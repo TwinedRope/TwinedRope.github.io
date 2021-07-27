@@ -59,7 +59,7 @@
             </h1>
             <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
             <a style="display:inline-block;" onclick="ToggleExp(2, event)">show explanation</a>
-            <p class="hidden" id="2">Type in the box below and click on the options further below to create colorful text. Then click the "Translate to Tellraw" button to generate the /tellraw command for the text you entered. Note that Minecraft does not accept all characters, and this generator does not prevent you from typing invalid Minecraft characters, so be sure to test each one. Also note that Minecraft will accept certain escape characters ("\b" for example), but these are often output incorrectly in-game (excluding "\\") (For \n, \", and \', simply input an enter, ", or ' charcater respectively").<br><br>Note that highlighting text, then clicking and dragging that selection around is not supported and will create issues with this system. Undo is also currently not supported.</p>
+            <p class="hidden" id="2">Type in the box below and click on the options further below to create colorful text. Then click the "Translate to Tellraw" button to generate the /tellraw command for the text you entered. Note that Minecraft does not accept all characters, and this generator does not prevent you from typing invalid Minecraft characters, so be sure to test each one. Also note that Minecraft will accept certain escape characters ("\b" for example), but these are often output incorrectly in-game (excluding "\\") (For \n, \", and \', simply input an enter, ", or ' charcater respectively).<br><br>Note that highlighting text, then clicking and dragging that selection around is not supported and will create issues with this system. Undo is also currently not supported.</p>
             <div class="warning-container">
                 <img src="Images/TNT.jpg" alt="tnt lag timer" class="warning-tnt" title="JavaScript performance indicator: should blink once a second">
                 <ul style="position: relative; top: -55px;">
@@ -112,6 +112,10 @@
                         Translate To Tellraw
                     </button>
                 </div>
+                <div class="checkbox" onclick="TransferCheckboxClick('auto-checkbox')">
+                    <input id="auto-checkbox" type="checkbox" class="click" onclick="SetAutoTranslate(event);" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
+                </div>
+                <p class="check-text" style="color: darkgray; text-shadow: 3px 3px black; cursor: pointer;" onclick="TransferCheckboxClick('auto-checkbox')" onmouseover="TransferCheckboxStyling('auto-checkbox', true);" onmouseleave="TransferCheckboxStyling('auto-checkbox', false);">Auto-Translate to Tellraw</p>
                 </div>
                 <div style="display: inline-block;" id="click-notification-box"></div>
                 <div style="display: inline-block;" id="hover-notification-box"></div>
@@ -121,7 +125,7 @@
                 <a onclick="ToggleExp(1, event)">show explanation</a>
                 <a onclick="ShowHide(5, event)" style="float: right; margin-top:38px; padding-right: 19px">hide</a>
                 <div style="display:block;""></div>
-                <p class="hidden" id="1">Click one of the colors below before typing to change what color your text will be. Highlight part of your entry above and then click a color to change that highlighted text. Your current color is outlined below.</p>
+                <p class="hidden" id="1">Click one of the colors below before typing to change what color your text will be. Highlight part of your entry above and then click a color to change that highlighted text. The color of the letter your cursor is on is outlined below.</p>
                 <div id="5">
                 <table>
                     <tr>
@@ -397,7 +401,7 @@
                         </div>
                     </td>
                     <td style="padding-left: 10px;">
-                        <p style="display: inline-block;"><img src="Images/RedstoneTorch.png" alt="redstone torch" style="display: inline-block; width: 32px; position: relative; top: 3px">Pro Tip: This output is editable if you need a specific target or need this executed as a certain entity, and your edits will update the MCFUNCTION file download as well (edits here are not checked for Minecraft Syntax errors).</p>
+                        <p style="display: inline-block;"><img src="Images/RedstoneTorch.png" alt="redstone torch" style="display: inline-block; width: 32px; position: relative; top: 3px">Pro Tip: This output is editable if you need a specific target or need this executed as a certain entity. You edits will not be checked for Minecraft syntax accuracy.</p>
                     </td>
                 </tr>
             </table>

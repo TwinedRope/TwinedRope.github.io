@@ -3,7 +3,14 @@ var lastOutputObject;
 var currentTellrawObject;
 var tellrawOutput = '';
 
+var autoTranslate = false;
+var autoTranslateIntervalID;
+
 function Submit() {
+    if(outputArray.length == 0) {
+        document.getElementsByClassName("tellraw-output")[0].value = '';
+        return;
+    }
     tellrawArray = [];
     lastOutputObject = outputArray[0];
     InitTellrawObject(lastOutputObject);
@@ -11,6 +18,8 @@ function Submit() {
     tellrawArray.forEach(TellrawOutput);
     tellrawOutput += ']}';
     document.getElementsByClassName("tellraw-output")[0].value = tellrawOutput;
+    if(autoTranslate)
+        document.getElementsByClassName("tellraw-output")[0].focus();
 }
 
 function InitTellrawObject(initObj) {    
@@ -102,4 +111,16 @@ function TellrawNodeOutput(item, first) {
         }
     }
     tellrawOutput += '}';
+}
+
+function SetAutoTranslate(event) {
+    if(!event.target.checked) {
+        autoTranslate = true;
+        clearInterval(autoTranslateIntervalID);
+    } else {
+        autoTranslate = false;
+        autoTranslateIntervalID = setInterval(() => {
+            Submit();
+        }, 500)
+    }
 }
