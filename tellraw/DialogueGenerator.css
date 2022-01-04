@@ -1,0 +1,226 @@
+#main-window {
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 30px;
+    width: 90%;
+    max-width: 1500px;
+    min-height: 50vh;
+    max-height: 70vh;
+    border: 3px solid darkgray;
+    overflow: scroll;
+    padding: 10px 0px;
+}
+
+#main-window p.line {
+    position: relative;
+    margin: 0px;
+    height: 22px;
+    text-overflow: clip;
+}
+
+#main-window span.connector {
+    position: relative;
+    top: -47px;
+    font-size: 40px;
+    padding: 0;
+    z-index: 0;
+    margin-right: 1500px !important;
+}
+
+#main-window .text {
+    position: relative;
+    top: -105px;
+    display: inline-block;
+    margin: 1px;
+    z-index: 2;
+    font-size: 17px;
+    width: auto;
+    margin-right: 1500px !important;
+}
+
+#main-window .text.root {
+    top: -9px;
+}
+
+#main-window .text.link {
+    color: rgba(255, 255, 255, 0.5) !important;
+    top: -117px;
+}
+
+#main-window .text span {
+    z-index: 1;
+}
+
+canvas {
+    z-index: -1 !important;
+}
+
+#main-window .text.link canvas {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+#main-window .text.link-highlight {
+    border: 1px dashed red !important;
+}
+
+#main-window .text.link span {
+    color: inherit !important;
+}
+
+#main-window .text:hover {
+    cursor: pointer;
+}
+
+#main-window button.expand-button {
+    height: 18px;
+    width: 18px;
+    font-size: 10px;
+    margin: 0px 3px;
+    text-shadow: none !important;
+    position: relative;
+    top: -70px;
+    left: -5px;
+    z-index: 3;
+    margin-right: 1500px !important;
+}
+
+#main-window button.expand-button:hover {
+    border: 3px solid white;
+    padding: 0px 0px 2px 0px;
+}
+
+#main-window button.expand-button:hover:disabled {
+    border: 3px solid rgba(0, 0, 0, 1) !important;
+}
+
+#main-window img.indicator {
+    position: relative;
+    top: -87px;
+    z-index: 1;
+}
+
+#main-window img.indicator.link {
+    top: -99px;
+}
+
+#main-window span.indent {
+    position: relative;
+    top: -22px !important;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    margin: 0px !important;
+}
+
+#main-window img.indent {
+    position: relative;
+    top: -10px !important;
+}
+
+#custom-tsi {
+    display: none;
+    width: calc(100% - 15%);
+}
+
+.custom-tsi {
+    display: inline;
+}
+
+input.custom-tsi {
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    border: 2px solid darkgray;
+    width: 100%;
+}
+
+.upper-buttons {
+    padding: 10px 0px;
+}
+
+div.tool-wrapper {
+    margin: 0% 5% 2.5% 2.5%;
+    flex-grow: 200;
+}
+
+div.side-btn-flex {
+    display: flex;
+    padding-left: 20px;
+}
+
+div.side-btn-flex button {
+    width: min-content;
+    padding: 0px;
+    border: 3px solid black;
+    margin: 1px;
+    cursor: pointer;
+}
+
+div.side-btn-flex button:disabled:hover {
+    border: 3px solid black;
+    margin: 1px 1px;
+    cursor: not-allowed;
+}
+
+div.side-btn-flex button:hover {
+    border: 4px solid white;
+    margin: 0px;
+}
+
+#side-btn-container {
+    flex-grow: 1;
+    width: auto !important;
+}
+
+select {
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    border: 2px solid darkgray;
+}
+
+.current-output {
+    position: relative;
+    top: -43px;
+}
+
+#input:disabled, .current-output.disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+button:disabled {
+    color: rgb(109, 109, 109);
+    background-color: rgb(75, 75, 75);
+    border-bottom: 5px solid rgb(30, 30, 30);
+    cursor: not-allowed;
+}
+
+div.button.disabled:hover {
+    border: 3px solid black;
+    margin: 11px 1px;
+    cursor: not-allowed;
+}
+
+.cursor-selected {
+    border: none !important;
+    margin: 0px !important;
+}
+
+img.indicator {
+    margin: 0px 5px -2px 0px;
+}
+
+img.indicator.link {
+    width: 16px;
+}
+
+#drag {
+    display: none;
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 255, 0.25);
+    color: rgba(255, 255, 255, 0.5);
+    position: fixed;
+    font-family: 'Courier New', Courier, monospace;
+}

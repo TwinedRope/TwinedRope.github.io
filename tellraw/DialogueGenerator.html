@@ -1,0 +1,175 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="TellrawGenerator.css">
+        <link rel="stylesheet" href="DialogueGenerator.css">
+        <link rel="stylesheet" href="Warnings.css">
+        <script type="text/javascript" src="TellrawGenerator.js"></script>
+        <script type="text/javascript" src="DialogueObject.js"></script>
+        <script type="text/javascript" src="DialogueButtons.js"></script>
+        <script type="text/javascript" src="DialogueGenerator.js"></script>
+        <script type="text/javascript" src="DialogueDrag.js"></script>
+        <script type="text/javascript" src="ExplanationToggles.js"></script>
+        <script type="text/javascript" src="General.js"></script>
+        <script type="text/javascript" src="Colors.js"></script>
+        <script type="text/javascript" src="Constants.js"></script>
+        <script type="text/javascript" src="Events.js"></script>
+        <script type="text/javascript" src="Format.js"></script>
+        <script type="text/javascript" src="Warnings.js"></script>
+        <script type="text/javascript" src="TellrawTranslation.js"></script>
+        <script type="text/javascript" src="TellrawParser.js"></script>
+        <title>Dialogue Generator - A Twined_Rope Tool</title>
+        <link rel="icon" href="Images/icon2.png">
+    </head>
+    <body onload="DialogueInit()" onclick="DocClick(event)" onresize="UpdateOutputBoxWidth()">
+        <div class="whiteout"></div>
+        <div class="page-wrapper">
+            <!--Image storage for canvases (prevents security issues when getting ImageData on chrome and edge)-->
+            <div style="position: absolute; left: -50px;" id="image-holder">
+                <img id="enchanted00" src="Images/Enchanted00.PNG">
+                <br>
+                <img id="enchanted01" src="Images/Enchanted01.PNG">
+                <br>
+                <img id="enchanted02" src="Images/Enchanted02.PNG">
+                <br>
+                <img id="enchanted03" src="Images/Enchanted03.PNG">
+                <br>
+                <img id="enchanted04" src="Images/Enchanted04.PNG">
+                <br>
+                <img id="enchanted05" src="Images/Enchanted05.PNG">
+                <br>
+                <img id="enchanted06" src="Images/Enchanted06.PNG">
+                <br>
+                <img id="enchanted00Bold" src="Images/Enchanted00Bold.PNG">
+                <br>
+                <img id="enchanted01Bold" src="Images/Enchanted01Bold.PNG">
+                <br>
+                <img id="enchanted02Bold" src="Images/Enchanted02Bold.PNG">
+                <br>
+                <img id="enchanted03Bold" src="Images/Enchanted03Bold.PNG">
+                <br>
+                <img id="enchanted04Bold" src="Images/Enchanted04Bold.PNG">
+                <br>
+                <img id="enchanted05Bold" src="Images/Enchanted05Bold.PNG">
+                <br>
+                <img id="enchanted06Bold" src="Images/Enchanted06Bold.PNG">
+            </div>
+            <div style="position: absolute; left: -1692px;" id="image-holder">
+                <img id="obfuscated00" src="Images/ObfuscatedFrames.png">
+                <br>
+                <img id="obfuscated00Bold" src="Images/ObfuscatedFramesBold.png">
+                <br>
+            </div>
+
+            <h1 style="display: inline-block;">
+                Dialogue Generator (WIP)
+            </h1>
+            <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
+            <a style="display:inline-block;" onclick="ToggleExp(2, event)">show explanation</a>
+            <p class="hidden" id="2">This tool should be used to generate the entire dialogue for an NPC. If you are just looking for a Tellraw Generator, check out <a href="#">this link</a>.</p>
+            <div class="side-btn-flex">
+                <table id="side-btn-container">
+                    <tr>
+                        <td>
+                            <button onclick="DAdd()" title="Add"><img src="Images/DG_add.png"></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="DDeleteRecursive()" title="Delete Recursively"><img src="Images/DG_delete.png"></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="CollapseExpandAll(true)" title="Collapse All"><img src="Images/DG_collapse.png"></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="CollapseExpandAll(false)" title="Expand All"><img src="Images/DG_expand.png"></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="DCopy()" title="Copy"><img src="Images/DG_copy.png"></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="DPaste()" title="Paste"><img src="Images/DG_paste.png"></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="DPaste(true)" title="Paste as Link"><img src="Images/DG_paste_link.png"></button>
+                        </td>
+                    </tr>
+                </table>
+                <div class="tool-wrapper">
+                    <div id="main-window">
+                        <p class="line">
+                            <span class="connector">˪</span>
+                            <span onclick="ClickLine(event)" class="text" dialogue_index='0' indent='0'>Hello World!</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="warning-container">
+                <img src="Images/TNT.jpg" alt="tnt lag timer" class="warning-tnt" title="JavaScript performance indicator: should blink once a second">
+                <ul style="position: relative; top: -55px;">
+                    <li class="over-texted" style="display: none;"><span class="warn">WARNING</span>: More than 800 characters have been entered. Performance is impacted</li>
+                    <li class="over-obfuscated" style="display: none;"><span class="warn">WARNING</span>: More than 100 obfuscated characters have been entered. Performance is impacted. <a onclick="ToggleObfuscatedAnimation()">Toggle Obfuscated Animation</a></li>
+                </ul>
+            </div>
+            <div id="drag"></div>
+            <label>
+                <strong>
+                Input tellraw for the selected dialogue line:
+                </strong>
+                <p id="obfWarning" style="display: none; color: #ffff55;"> WARNING: performance decreased from obfuscated text. <a onclick="ToggleObfuscatedAnimation()">Toggle Animation</a></p>
+            </label>
+            <textarea id="input" oninput="SetOutdated()" onclick="UpdateCursorPositionClick(event)" onkeyup="KeyUpEventUpdate(event)" onkeydown="KeyDownEventUpdate(event)" onfocus="FocusEventHighlight(event)" onselect="HandleOutputSelection(event)"></textarea>
+            <div class="button">
+                <button id="submit-line" onclick="SubmitLine()">
+                    Submit
+                </button>
+            </div>
+            <a onclick="ShowHide(7, event)" style="float: right; margin-top:19px; padding-right: 19px">hide</a>
+            <div style="display:block;""></div>
+            <label style="padding-top: 25px;">
+                Current Output:
+            </label>
+            <!--<p id="cursor" style="position: relative; top: 35px; font-size: 30px; height: 0px; margin-top: -20px;">|</p>-->
+            <div id="7">
+                <div class="current-output"></div>
+            </div>
+            <div style="display: inline-block;" id="click-notification-box"></div>
+            <div style="display: inline-block;" id="hover-notification-box"></div>
+
+            <!-- Footer -->
+            <table>
+                <tr>
+                    <td style="padding: 0px 50px;">
+                        <img src="Images\250px-Dancing_Blue_Parrot.gif" style="width: 100px;">
+                    </td>
+                    <td>
+                        <p style="padding-right: 20px;">Bug Reports? Suggestions? General Comments? #0000FF and Twined_Rope want to hear about it! Post on the forum where you found this tool or email me at Twined_Rope@gmail.com.</p>
+                    </td>
+                    <td style="padding: 0px 50px;">
+                        <img src="Images\Twined_Rope Head.png" style="width: 100px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 0px 50px;">
+                        <p>#0000FF</p>
+                    </td>
+                    <td>
+
+                    </td>
+                    <td style="padding: 0px 50px;">
+                        <p>Twined_Rope</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
