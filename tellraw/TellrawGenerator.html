@@ -1,6 +1,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="TellrawGenerator.css">
+        <link rel="stylesheet" href="DialogueGenerator.css">
         <link rel="stylesheet" href="Warnings.css">
         <script type="text/javascript" src="TellrawGenerator.js"></script>
         <script type="text/javascript" src="ExplanationToggles.js"></script>
@@ -11,10 +12,13 @@
         <script type="text/javascript" src="Format.js"></script>
         <script type="text/javascript" src="Warnings.js"></script>
         <script type="text/javascript" src="TellrawTranslation.js"></script>
+        <script type="text/javascript" src="TellrawParser.js"></script>
+        <script type="text/javascript" src="DialogueGenerator.js"></script>
+        <script type="text/javascript" src="DialogueObject.js"></script>
         <title>Tellraw Generator - A Twined_Rope Tool</title>
         <link rel="icon" href="Images/icon2.png">
     </head>
-    <body onload="Initialize();" onresize="UpdateOutputBoxWidth()">
+    <body onload="Initialize();" onclick="DocClick()" onresize="UpdateOutputBoxWidth()">
         <div class="whiteout"></div>
         <div class="page-wrapper">
             <!--Image storage for canvases (prevents security issues when getting ImageData on chrome and edge)-->
@@ -69,35 +73,18 @@
             </div>
             <label>
                 <strong>
-                Input text to be converted to a tellraw command:
+                Input text to be converted to or from a tellraw command:
                 </strong>
                 <p id="obfWarning" style="display: none; color: #ffff55;"> WARNING: performance decreased from obfuscated text. <a onclick="ToggleObfuscatedAnimation()">Toggle Animation</a></p>
             </label>
             <textarea id="input" oninput="CalculateOutput(event)" onclick="UpdateCursorPositionClick(event)" onkeyup="KeyUpEventUpdate(event)" onkeydown="KeyDownEventUpdate(event)" onfocus="FocusEventHighlight(event)" onselect="HandleOutputSelection(event)"></textarea>
-            <!--UI Options-->
-            <!--Hidden until I can figure out a public way to output MCFunction files-->
-            <div class="button selected task" style="display: none">
-                <button onclick="Select(event, 'task', 'content', 'single-tellraw')">
-                    Single Tellraw Output
+            <div class="button">
+                <button onclick="ImportTellrawCode()">
+                    Import Tellraw Code
                 </button>
             </div>
-            <div class="button task" style="display: none;">
-                <button onclick="Select(event, 'task', 'content', 'full-dialogue')">
-                    Full Dialogue Output
-                </button>
-            </div>
-            <div class="button task" style="display: none">
-                <button onclick="Select(event, 'task', 'content', 'decode-tellraw')">
-                    Input /tellraw Code
-                </button>
-            </div>
-            <!--Single Tellraw Options-->
-            <div class="content hidden" id="full-dialogue">
-                <p>Full Dialogue</p>
-            </div>
-            <div class="content hidden" id="decode-tellraw">
-                <p>Decode Tellraw</p>
-            </div>
+            <p class="check-text" style="color: darkgray; text-shadow: 3px 3px black; cursor: pointer;">*Does not check for code correctness</p>
+            <p class="check-text" style="color: darkgray; text-shadow: 3px 3px black; cursor: pointer;">**Overwrites any previously input text</p>
             <div class="content" id="single-tellraw">
                 <a onclick="ShowHide(7, event)" style="float: right; margin-top:19px; padding-right: 19px">hide</a>
                 <div style="display:block;""></div>
@@ -393,10 +380,11 @@
                             </button>
                         </div>
                     </td>
-                    <td style="width: 25%; display: none;">
+                    <td style="width: 25%;">
                         <div class="button">
-                            <button>
+                            <button onclick="DowloadMCFunctionFile(event)">
                                 Download MCFUNCTION File
+                                <img src="Images/loading.gif" id="download-loading" style="display: none; width: 30px; height: 30px; object-fit: cover;">
                             </button>
                         </div>
                     </td>

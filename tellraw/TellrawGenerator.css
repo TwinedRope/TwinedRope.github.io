@@ -85,6 +85,11 @@ p {
     display: inline-block;
     border: 3px solid black;
     margin: 11px 1px;
+    cursor: pointer;
+}
+
+.button button {
+    cursor: pointer;
 }
 
 .button:hover {
@@ -233,7 +238,7 @@ p {
     color: white;
     font-family: Courier, monospace;
     font-size: 30px;
-    position: absolute;
+    position: fixed;
     max-width: 433px; /*Minecraft accuracy*/
 }
 
