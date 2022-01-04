@@ -19,14 +19,20 @@ function ColorButton(event) {
 }
 
 function UpdateCurrentColor() {
-    if(lastSelection.length > 0) {
-        currentColor = outputArray[cursorPosition].color;    
-    } else {
-        currentColor = cursorPosition == 0 ? outputArray[cursorPosition].color : outputArray[cursorPosition - 1].color;
+    try {
+        if(lastSelection.length > 0) {
+            currentColor = outputArray[cursorPosition].color;    
+        } else {
+            currentColor = cursorPosition == 0 ? outputArray[cursorPosition].color : outputArray[cursorPosition - 1].color;
+        }
+        var buttonClass = ColorDecodeHex[currentColor];
+    
+        document.getElementsByClassName("selected-color")[0].classList.remove("selected-color");
+        document.getElementsByClassName(buttonClass)[0].classList.add("selected-color");
     }
-    var buttonClass = ColorDecodeHex[currentColor];
-    document.getElementsByClassName("selected-color")[0].classList.remove("selected-color");
-    document.getElementsByClassName(buttonClass)[0].classList.add("selected-color");
+    catch(e) {
+        //ignore this for the dialogue generator
+    }
 }
 
 function ColorHighlight(selection) {

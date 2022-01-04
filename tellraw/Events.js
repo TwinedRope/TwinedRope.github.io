@@ -95,18 +95,23 @@ function EventHighlight(selection) {
 }
 
 function UpdateCurrentEvents(type) {
-    const eventIndex = type == 'click' ? 0 : 1;
-    if(lastSelection.length > 0) {
-        currentEvents[eventIndex] = outputArray[cursorPosition].event[eventIndex];
-    } else {
-        currentEvents[eventIndex] = cursorPosition == 0 ? outputArray[cursorPosition].event[eventIndex] : outputArray[cursorPosition - 1].event[eventIndex];
-    }
-    if(currentEvents[eventIndex] == undefined && lastSelection.endIndex > 0)
-        currentEvents[eventIndex] = outputArray[lastSelection.endIndex - 1].event[eventIndex];
-    if(currentEvents[eventIndex] != undefined) {
-        document.getElementById(type + "-event-input").value = currentEvents[eventIndex].value;
-    } else {
-        document.getElementById(type + "-event-input").value = '';
+    try {
+        const eventIndex = type == 'click' ? 0 : 1;
+        if(lastSelection.length > 0) {
+            currentEvents[eventIndex] = outputArray[cursorPosition].event[eventIndex];
+        } else {
+            currentEvents[eventIndex] = cursorPosition == 0 ? outputArray[cursorPosition].event[eventIndex] : outputArray[cursorPosition - 1].event[eventIndex];
+        }
+        if(currentEvents[eventIndex] == undefined && lastSelection.endIndex > 0)
+            currentEvents[eventIndex] = outputArray[lastSelection.endIndex - 1].event[eventIndex];
+
+        if(currentEvents[eventIndex] != undefined) {
+            document.getElementById(type + "-event-input").value = currentEvents[eventIndex].value;
+        } else {
+            document.getElementById(type + "-event-input").value = '';
+        }
+    } catch(e) {
+        //ignore errors for dialogue generator
     }
 }
 

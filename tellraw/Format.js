@@ -80,19 +80,24 @@ function FormatHighlight(selection) {
 }
 
 function UpdateCurrentFormat() {
-    if(lastSelection.length > 0) {
-        currentFormats = Array.from(outputArray[cursorPosition].format);
-    } else {
-        currentFormats = cursorPosition == 0 ? Array.from(outputArray[cursorPosition].format) : Array.from(outputArray[cursorPosition - 1].format);
-    }
-    var buttons = document.querySelectorAll(".button.option.formatting > button");
-    buttons.forEach(SetButtonActive);
-    if(currentFormats.length == 0) {
-        noFormatting = true;
-        document.getElementsByName("none")[0].parentElement.classList.add("selected-format");
-    } else {
-        noFormatting = false;
-        document.getElementsByName("none")[0].parentElement.classList.remove("selected-format");
+    try {
+        if(lastSelection.length > 0) {
+            currentFormats = Array.from(outputArray[cursorPosition].format);
+        } else {
+            currentFormats = cursorPosition == 0 ? Array.from(outputArray[cursorPosition].format) : Array.from(outputArray[cursorPosition - 1].format);
+        }
+        var buttons = document.querySelectorAll(".button.option.formatting > button");
+        buttons.forEach(SetButtonActive);
+        
+        if(currentFormats.length == 0) {
+            noFormatting = true;
+            document.getElementsByName("none")[0].parentElement.classList.add("selected-format");
+        } else {
+            noFormatting = false;
+            document.getElementsByName("none")[0].parentElement.classList.remove("selected-format");
+        }
+    } catch(e) {
+        //ignore errors for dialogue generator
     }
 }
 
