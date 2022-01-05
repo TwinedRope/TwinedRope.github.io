@@ -177,9 +177,9 @@ select {
     border: 2px solid darkgray;
 }
 
-.current-output {
+.current-output, label#output-label {
     position: relative;
-    top: -43px;
+    top: -25px;
 }
 
 #input:disabled, .current-output.disabled {
@@ -220,4 +220,36 @@ img.indicator.link {
     color: rgba(255, 255, 255, 0.5);
     position: fixed;
     font-family: 'Courier New', Courier, monospace;
+}
+
+div.file-input {
+    display: inline-block;
+    position: relative;
+    top: 25px;
+    padding: 5px;
+    margin: 0px 5px;
+    background-color: rgb(109, 109, 109);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
+    border: 3px solid black;
+}
+
+div.file-input label {
+    color: white;
+    font-size: 17px;
+    text-shadow: 1px 1px black;
+    margin: 3px;
+}
+
+div.file-input input {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    text-shadow: 2px 2px black;
+}
+
+div.file-input p {
+    color: white;
+    font-size: 20px;
+    margin: 3px;
+    text-shadow: 2px 2px black;
 }

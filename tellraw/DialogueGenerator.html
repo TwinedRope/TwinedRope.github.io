@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="Warnings.css">
         <script type="text/javascript" src="TellrawGenerator.js"></script>
         <script type="text/javascript" src="DialogueObject.js"></script>
+        <script type="text/javascript" src="DialogueSaveLoad.js"></script>
         <script type="text/javascript" src="DialogueButtons.js"></script>
         <script type="text/javascript" src="DialogueGenerator.js"></script>
         <script type="text/javascript" src="DialogueDrag.js"></script>
@@ -66,6 +67,20 @@
             <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
             <a style="display:inline-block;" onclick="ToggleExp(2, event)">show explanation</a>
             <p class="hidden" id="2">This tool should be used to generate the entire dialogue for an NPC. If you are just looking for a Tellraw Generator, check out <a href="#">this link</a>.</p>
+            <div class="button">
+                <button onclick="Save()">
+                    Save Project
+                    <img src="Images/loading.gif" id="save-loading" style="display: none; width: 18px; height: 18px; object-fit: cover;">
+                </button>
+            </div>
+            
+            <div class="file-input">
+                <p>Load Project:</p>
+                <label>Accetped file types: .json</label>
+                <input type="file" id="json-import" accept=".json"></input>
+            </div>
+            <br>
+            <br>
             <div class="side-btn-flex">
                 <table id="side-btn-container">
                     <tr>
@@ -134,8 +149,8 @@
                 </button>
             </div>
             <a onclick="ShowHide(7, event)" style="float: right; margin-top:19px; padding-right: 19px">hide</a>
-            <div style="display:block;""></div>
-            <label style="padding-top: 25px;">
+            <div style="display:block;"></div>
+            <label style="padding-top: 25px;" id="output-label">
                 Current Output:
             </label>
             <!--<p id="cursor" style="position: relative; top: 35px; font-size: 30px; height: 0px; margin-top: -20px;">|</p>-->
@@ -144,6 +159,9 @@
             </div>
             <div style="display: inline-block;" id="click-notification-box"></div>
             <div style="display: inline-block;" id="hover-notification-box"></div>
+            <div class="button">
+                <button>Export to MCFUNCTION Suite</button>
+            </div>
 
             <!-- Footer -->
             <table>

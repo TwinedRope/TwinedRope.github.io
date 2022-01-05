@@ -226,7 +226,7 @@ function CopyTellrawOutput() {
 
 var num = 1;
 
-function DowloadMCFunctionFile() {
+function DownloadMCFunctionFile() {
     document.getElementById("download-loading").style.display = "inline";
     let aPromise = function aPromiseFunc(){
         return new Promise((resolve, reject) => {

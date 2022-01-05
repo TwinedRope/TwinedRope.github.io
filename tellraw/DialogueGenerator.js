@@ -1,3 +1,13 @@
+/**
+ * Things to Do:
+ *  - Conversion to MCFUNCTION system
+ *  - Explain everything
+ * Improvements:
+ *  - Collapse state is not store upon load/save
+ *  - Double-click a link not to automatically select the parent
+ *  - Certain colors won't parse. Check constants.js
+ */
+
 const bracketE = '˪';
 const bracketM = '˫';
 const bracketV = '|';
@@ -16,6 +26,7 @@ function DialogueInit() {
 
     document.body.addEventListener("mouseup", function() {DeactivateDrag()});
     document.body.addEventListener("mousemove", function(event) {Drag(event)});
+    document.getElementById("json-import").addEventListener("change", function(event) { FileUpdater(event); });
     window.addEventListener("resize", function() { ResizeWidthFormatting(); });
     ResizeWidthFormatting();
 
