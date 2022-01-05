@@ -4,7 +4,6 @@
     font-family: 'Courier New', Courier, monospace;
     font-size: 30px;
     width: 90%;
-    max-width: 1500px;
     min-height: 50vh;
     max-height: 70vh;
     border: 3px solid darkgray;
@@ -25,7 +24,6 @@
     font-size: 40px;
     padding: 0;
     z-index: 0;
-    margin-right: 1500px !important;
 }
 
 #main-window .text {
@@ -36,7 +34,6 @@
     z-index: 2;
     font-size: 17px;
     width: auto;
-    margin-right: 1500px !important;
 }
 
 #main-window .text.root {
@@ -82,7 +79,6 @@ canvas {
     top: -70px;
     left: -5px;
     z-index: 3;
-    margin-right: 1500px !important;
 }
 
 #main-window button.expand-button:hover {
@@ -116,6 +112,7 @@ canvas {
 #main-window img.indent {
     position: relative;
     top: -10px !important;
+    margin-right: 6px;
 }
 
 #custom-tsi {

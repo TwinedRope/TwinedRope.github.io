@@ -2,7 +2,8 @@ const bracketE = '˪';
 const bracketM = '˫';
 const bracketV = '|';
 
-var calculatedWidth = '1500px';
+var calculatedWidth = 1500;
+var widthRatio = 1500 / 1920;
 
 var clicks = 0;
 var selected;
@@ -15,6 +16,8 @@ function DialogueInit() {
 
     document.body.addEventListener("mouseup", function() {DeactivateDrag()});
     document.body.addEventListener("mousemove", function(event) {Drag(event)});
+    window.addEventListener("resize", function() { ResizeWidthFormatting(); });
+    ResizeWidthFormatting();
 
     RefreshMainWindow();
 
@@ -66,16 +69,16 @@ function RenderDialogue(dia, indent = 0) {
         diatext.classList.add('root');
     } else {
         dialine.appendChild(connector);
+        dialine.appendChild(document.createElement("BR"));
         dialine.appendChild(expandButton);
+        dialine.appendChild(document.createElement("BR"));
         dialine.appendChild(indicator);
+        dialine.appendChild(document.createElement("BR"));
         diatext.style.left = (baseLeft + 65) + 'px';
         expandButton.style.left = (baseLeft + 17) + 'px';
         indicator.style.left = (baseLeft + 41) + 'px';
         connector.style.left = (baseLeft);
         dialine.style.width = baseLeft;
-        expandButton.style.marginRight = calculatedWidth;
-        indicator.style.marginRight = calculatedWidth;
-        connector.style.marginRight = calculatedWidth;
     }
     if(dia.link) {
         diatext.classList.add("link");
@@ -86,9 +89,8 @@ function RenderDialogue(dia, indent = 0) {
         linkIco.addEventListener("click", function(event) { TransferClickToText(event); });
         linkIco.style.left = (baseLeft + 60) + 'px';
         diatext.style.left = (baseLeft + 80) + 'px';
-        linkIco.style.marginRight = calculatedWidth;
-        diatext.style.marginRight = calculatedWidth;
         dialine.appendChild(linkIco);
+        dialine.appendChild(document.createElement("BR"));
     }
     dialine.appendChild(diatext);
     connector.classList.add("connector");
@@ -255,4 +257,11 @@ function TransferClickToText(event) {
 function ToggleCollapse(event, dia) {
     dia.collapsed = !dia.collapsed;
     RefreshMainWindow();
+}
+
+function ResizeWidthFormatting() {
+    let newMaxWidth = 1800 + (window.innerWidth - 1920);
+    calculatedWidth = newMaxWidth;
+    console.log(newMaxWidth);
+    document.getElementById("main-window").style.maxWidth = newMaxWidth;
 }
