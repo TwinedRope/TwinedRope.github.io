@@ -38,6 +38,8 @@ label {
     color: darkgrey;
     text-shadow: 3px 3px black;
     display: block;
+    min-width: 1px;
+    min-height: 29px;
 }
 
 button {

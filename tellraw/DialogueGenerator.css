@@ -34,6 +34,7 @@
     z-index: 2;
     font-size: 17px;
     width: auto;
+    white-space: nowrap;
 }
 
 #main-window .text.root {
@@ -73,8 +74,8 @@ canvas {
     height: 18px;
     width: 18px;
     font-size: 10px;
-    margin: 0px 3px;
     text-shadow: none !important;
+    margin: 0px 3px;
     position: relative;
     top: -70px;
     left: -5px;
@@ -107,6 +108,14 @@ canvas {
     width: 22px;
     height: 22px;
     margin: 0px !important;
+}
+
+#main-window span.seq-num-indicator {
+    position: relative;
+    top: -107px;
+    z-index: 5;
+    height: 0;
+    width: 0;
 }
 
 #main-window img.indent {
@@ -252,4 +261,52 @@ div.file-input p {
     font-size: 20px;
     margin: 3px;
     text-shadow: 2px 2px black;
+}
+
+button.expand-button.external {
+    height: 25px;
+    width: 25px;
+    font-size: 15px;
+    text-shadow: none !important;
+    padding: 0;
+    display: inline;
+    margin: 3px;
+    padding-bottom: 5px;
+    border: 3px solid black;
+}
+
+button.expand-button.external:hover {
+    border: 3px solid white;
+    cursor: pointer;
+}
+
+.dropdown-label {
+    font-size: 30px;;
+    display: inline;
+}
+
+.expandable {
+    cursor: pointer;
+    margin-bottom: 50px;
+}
+
+.expandable-content {
+    display: none;
+}
+
+#condition {
+    height: 50px;
+    margin-top: 29px;
+    font-size: 30px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.large-unit {
+    font-size: 50px;
+    margin: -2px 10px;
+}
+
+.expandable-content .button {
+    position: relative;   
+    top: -13.5px;
 }

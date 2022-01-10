@@ -61,7 +61,7 @@ const ColorEncodeMCHex = {
     'gray': '#aaaaaa',
     'dark_gray': '#555555',
     'light_purple': '#ff55ff',
-    'dark_purple': '#a00aa',
+    'dark_purple': '#aa00aa',
     'dark_aqua': '#00aaaa',
     'aqua': '#55ffff',
     'dark_blue': '#0000aa',

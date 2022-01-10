@@ -1,11 +1,18 @@
 /**
  * Things to Do:
  *  - Conversion to MCFUNCTION system
+ *  - Conditional system with scoreboard variables
+ *      - Integrate with MCFUN system
+ *  - Conditional random system
+ *      - Integrate with MCFUN system
+ *  - Actions upon arrival
  *  - Explain everything
+ *  
  * Improvements:
  *  - Collapse state is not store upon load/save
  *  - Double-click a link not to automatically select the parent
  *  - Certain colors won't parse. Check constants.js
+ *  - clean up unicode issues invovling '"'
  */
 
 const bracketE = '˪';
@@ -46,6 +53,9 @@ function RenderDialogue(dia, indent = 0) {
     let diatext = document.createElement("SPAN");
     let indicator = document.createElement("IMG");
     let expandButton = document.createElement("BUTTON");
+    let seqNumIndicator = document.createElement("SPAN");
+    seqNumIndicator.innerText = dia.seqNum;
+    seqNumIndicator.classList.add("seq-num-indicator");
     expandButton.innerHTML = dia.collapsed ? '+' : '-';
     expandButton.classList.add("expand-button");
     expandButton.addEventListener("click", function(event) { ToggleCollapse(event, dia); });
@@ -85,6 +95,11 @@ function RenderDialogue(dia, indent = 0) {
         dialine.appendChild(document.createElement("BR"));
         dialine.appendChild(indicator);
         dialine.appendChild(document.createElement("BR"));
+        if(seqNumVisible) {
+            dialine.appendChild(seqNumIndicator);
+            dialine.appendChild(document.createElement("BR"));
+            diatext.style.top = "-128px";
+        }
         diatext.style.left = (baseLeft + 65) + 'px';
         expandButton.style.left = (baseLeft + 17) + 'px';
         indicator.style.left = (baseLeft + 41) + 'px';
@@ -275,4 +290,26 @@ function ResizeWidthFormatting() {
     calculatedWidth = newMaxWidth;
     console.log(newMaxWidth);
     document.getElementById("main-window").style.maxWidth = newMaxWidth;
+}
+
+var seqNumVisible = false;
+function ToggleSeqNum() {
+    seqNumVisible = !seqNumVisible;
+    RefreshMainWindow();
+}
+
+var expandables = {
+    "action": false,
+    "conditional": false
+};
+function ExpandExpandable(event) {
+    let id = event.target.parentElement.id;
+    expandables[id] = !expandables[id];
+
+    document.querySelector("#" + id + ".expandable button").innerHTML = expandables[id] ? "-" : "+";
+    if(expandables[id]) {
+        document.querySelector(".expandable-content." + id).style.display = "block";
+    } else {
+        document.querySelector(".expandable-content." + id).style.display = "none";
+    }
 }

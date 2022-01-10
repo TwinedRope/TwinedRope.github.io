@@ -3,8 +3,8 @@
  * /tellraw @p {"text":"","extra":[{"text":"[","color":"white"},{"text":"Jeffrey Gaydos","color":"aqua","hoverEvent":{"action":"show_text", "value":"AKA Twined_Rope"}},{"text":"]: Hello and welcome to the ","color":"white"},{"text":"Keep on the Shadowfell","color":"gold","hoverEvent":{"action":"show_text", "value":"A map related to a D&D lvl 1 adventure"}},{"text":" map! Yes, I am ","color":"white"},{"text":"Twined_Rope","color":"blue","hoverEvent":{"action":"show_text", "value":"AKA Jeffrey Gaydos"}},{"text":", the creator of the tellraw generator. Check it out!\n","color":"white"},{"text":"-Continue-","color":"dark_green","clickEvent":{"action":"run_command", "value":"say continue"}}]}
  */
 
-function ImportTellrawCode(dialogue = false) {
-    var input = document.getElementById("input").value;
+function ImportTellrawCode(dialogue = false, TRInput = undefined) {
+    var input = TRInput ? TRInput : document.getElementById("input").value;
     if(input.indexOf("tellraw") != 0 && input.indexOf("tellraw") != 1) {
         alert("The tellraw code you entered is not able to be properly parsed. Check for syntax errors.");
         return;
@@ -52,6 +52,8 @@ function ImportTellrawCode(dialogue = false) {
         document.getElementById("input").value = GenOutputToOutputArray(TRO);
         document.getElementById("input").click();
     }
+
+    return TRO;
 }
 
 function RawToGenOutput(rj) {

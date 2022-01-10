@@ -66,7 +66,12 @@
             </h1>
             <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
             <a style="display:inline-block;" onclick="ToggleExp(2, event)">show explanation</a>
-            <p class="hidden" id="2">This tool should be used to generate the entire dialogue for an NPC. If you are just looking for a Tellraw Generator, check out <a href="#">this link</a>.</p>
+            <br>
+            <div class="hidden" id="2">
+                <p>This tool should be used to generate the entire dialogue for an NPC. If you are just looking for a Tellraw Generator, check out <a href="https://twinedrope.github.io/tellraw/TellrawGenerator.html">this link</a> for my creation or a more <a href="https://www.minecraftjson.com/">offical one</a>. </p>
+                <p>This tool links up (using functions) a set of tellraw commands that you input. You can save and load your previously-made dialogues if you need to make an edit to them. The buttons on the left allow you to create the tree structure that most dialogues follow, then you can edit/add your tellraw for the individual lines using the input boxes below that. Click events are automatically added to the player responses, any other actions you need to run upon the user clicking should be through the action or conditional systems (below the input boxes).</p>
+                <p>Upon clicking the export button at the bottom, the required MCFUNCTION files are created. It is very important that these are placed in a very specific spot within your save, so be sure to read the explaination below after exporting. The numbers on the name of each MCFUNCTION correspond to "sequence numbers" that are togglable here in case you need to debug or add custom functionality to a specific line after exporting.</p>
+            </div>
             <div class="button">
                 <button onclick="Save()">
                     Save Project
@@ -78,6 +83,9 @@
                 <p>Load Project:</p>
                 <label>Accetped file types: .json</label>
                 <input type="file" id="json-import" accept=".json"></input>
+            </div>
+            <div class="button">
+                <button onclick="ToggleSeqNum()">Toggle Sequence Numbers</button>
             </div>
             <br>
             <br>
@@ -150,17 +158,102 @@
             </div>
             <a onclick="ShowHide(7, event)" style="float: right; margin-top:19px; padding-right: 19px">hide</a>
             <div style="display:block;"></div>
-            <label style="padding-top: 25px;" id="output-label">
-                Current Output:
-            </label>
-            <!--<p id="cursor" style="position: relative; top: 35px; font-size: 30px; height: 0px; margin-top: -20px;">|</p>-->
             <div id="7">
+                <label style="padding-top: 25px;" id="output-label">
+                    Current Output:
+                </label>
+                 <!--<p id="cursor" style="position: relative; top: 35px; font-size: 30px; height: 0px; margin-top: -20px;">|</p>-->
                 <div class="current-output"></div>
             </div>
             <div style="display: inline-block;" id="click-notification-box"></div>
             <div style="display: inline-block;" id="hover-notification-box"></div>
+            <div class="expandable" id="action">
+                <button onclick="ExpandExpandable(event)" class="expand-button external">+</button>
+                <h1 onclick="ExpandExpandable(event)" class="dropdown-label">Actions</h1>
+            </div>
+            <div class="action expandable-content">
+                <p>Current Actions on Selected Line:</p>
+                <ol class="list">
+
+                </ol>
+                <label>Add Minecraft Command Action:</label>
+                <div style="display: flex;">
+                    <textarea style="display: inline;"></textarea>
+                    <div class="button">
+                        <button>Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expandable" id="conditional">
+                <button onclick="ExpandExpandable(event)" class="expand-button external">+</button>
+                <h1 onclick="ExpandExpandable(event)" class="dropdown-label">Conditions</h1>
+            </div>
+            <div class="conditional expandable-content">
+                <p>Current Conditions on Selected Line:</p>
+                <ul class="list">
+                    <li>
+                        <p>Variable Conditions:</p>
+                        <ol class="variables">
+
+                        </ol>
+                    </li>
+                    <li>
+                        <p>Random Conditions:</p>
+                        <ol class="random">
+
+                        </ol>
+                    </li>
+                </ul>
+                <div style="display: flex;">
+                    <div>
+                        <label style="display: block;">Scoreboard Name:</label>
+                        <textarea id="scoreboard" style="display: inline;"></textarea>
+                    </div>
+                    <select id="condition">
+                        <option value="equal">=</option>
+                        <option value="not-equal">!=</option>
+                        <option value="less-equal"><=</option>
+                        <option value="greater-equal">>=</option>
+                        <option value="less"><</option>
+                        <option value="greater">></option>
+                    </select>
+                    <div>
+                        <label>Number to Compare To:</label>
+                        <textarea id="against" style="display: inline;"></textarea>
+                    </div>
+                    <div>
+                        <label></label>
+                        <div class="button">
+                            <button>Submit</button>
+                        </div>
+                    </div>
+                </div>
+                <label>Add Random Conditions:</label>
+                <div style="display: flex;">
+                    <textarea style="display: inline;"></textarea>
+                    <p class="large-unit">%</p>
+                    <div class="button inline">
+                        <button>Submit</button>
+                    </div>
+                </div>
+                <p>* Randomness is based on loot tables, and uses Antoha256M's simple function system, downloadable <a href="https://www.planetminecraft.com/data-pack/simple-randomizer-1-16-1-18/">here</a>. Also, see <a href="https://www.planetminecraft.com/blog/how-to-download-and-install-minecraft-data-packs/">how to install minecraft datapacks</a>.</p>
+            </div>
+
             <div class="button">
-                <button>Export to MCFUNCTION Suite</button>
+                <button onclick="Export()">
+                    Export to MCFUNCTION Suite
+                    <img src="Images/loading.gif" id="export-loading" style="display: none; width: 18px; height: 18px; object-fit: cover;">
+                </button>
+            </div>
+            <div id="MCFunc-downloads">
+                <br>
+                <div class="button">
+                    <button style="display: none;" onclick="DownloadAllMCFuncs()">Download All Files</button>
+                </div>
+            </div>
+            <div id="export-downloads">
+
             </div>
 
             <!-- Footer -->
@@ -188,6 +281,8 @@
                     </td>
                 </tr>
             </table>
+            <br>
+            <p style="font-size: 15px;">"Minecraft" content and materials are trademarks and copyrights of Mojang and its licensors. This site is not affiliated with Mojang.</p>
         </div>
     </body>
 </html>
