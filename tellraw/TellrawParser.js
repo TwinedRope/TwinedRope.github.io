@@ -37,9 +37,11 @@ function ImportTellrawCode(dialogue = false, TRInput = undefined) {
     var TRO = [];
     TRO.push({});
     TRO[0].value =  RawToGenOutput(TRJ, 0);
-    for(var i = 0; i < TRJ['extra'].length; i++) {
-        TRO.push({});
-        TRO[i + 1].value = RawToGenOutput(TRJ['extra'][i]);
+    if(TRJ['extra']) {
+        for(var i = 0; i < TRJ['extra'].length; i++) {
+            TRO.push({});
+            TRO[i + 1].value = RawToGenOutput(TRJ['extra'][i]);
+        }
     }
 
     outputArray = [];

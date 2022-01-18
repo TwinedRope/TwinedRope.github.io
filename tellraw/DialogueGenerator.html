@@ -156,6 +156,10 @@
                     Submit
                 </button>
             </div>
+            <div class="checkbox" onclick="TransferCheckboxClick('click-checkbox')">
+                <input id="click-checkbox" type="checkbox" class="click" onclick="ToggleTRErrors()" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
+            </div>
+            <p class="check-text" style="color: darkgray; text-shadow: 3px 3px black; cursor: pointer;" onclick="TransferCheckboxClick('click-checkbox')" onmouseover="TransferCheckboxStyling('click-checkbox', true);" onmouseleave="TransferCheckboxStyling('click-checkbox', false);" title="If my parser is incorrect, you can still use your tellraw in this system">Ignore tellraw parse errors</p>
             <a onclick="ShowHide(7, event)" style="float: right; margin-top:19px; padding-right: 19px">hide</a>
             <div style="display:block;"></div>
             <div id="7">

@@ -44,6 +44,9 @@ function DialogueInit() {
     element.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
     element.style.margin = "0px";
     Select(element);
+
+    document.querySelector("#action button").click();
+    document.querySelector("#conditional button").click();
 }
 
 //NOTE: Recursive
@@ -149,7 +152,7 @@ function RefreshMainWindow() {
 }
 
 function DocClick(event) {
-    if(event.target.id != "input" && event.target.innerText != "Submit" && event.target.tagName != 'BUTTON' && event.target.parentElement.tagName != "BUTTON") {
+    if(event.target.id == "main-window") {
         document.querySelectorAll("p > span.text").forEach((element) => {
             element.style.border = "none";
             element.style.backgroundColor = "rgba(0, 0, 0, 0)";
@@ -233,8 +236,10 @@ function SubmitLine() {
     try {
         ImportTellrawCode(true);
     } catch(e) {
-        alert("The tellraw you entered could not be parsed. Consider submitting a bug report if this seems wrong.");
-        return;
+        if(!ignoreTRErrors) {
+            alert("The tellraw you entered could not be parsed. Consider submitting a bug report if this seems wrong.");
+            return;
+        } //otherwise we want our system to give its best effort into decifering what is going on
     }
     let newTellraw = document.getElementById("input").value;
     let newOutput = "";
@@ -312,4 +317,9 @@ function ExpandExpandable(event) {
     } else {
         document.querySelector(".expandable-content." + id).style.display = "none";
     }
+}
+
+var ignoreTRErrors = false;
+function ToggleTRErrors() {
+    ignoreTRErrors = !ignoreTRErrors;
 }
