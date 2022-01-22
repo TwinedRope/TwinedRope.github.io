@@ -9,6 +9,7 @@
         <script type="text/javascript" src="DialogueButtons.js"></script>
         <script type="text/javascript" src="DialogueGenerator.js"></script>
         <script type="text/javascript" src="DialogueDrag.js"></script>
+        <script type="text/javascript" src="DialogueActionsConditions.js"></script>
         <script type="text/javascript" src="ExplanationToggles.js"></script>
         <script type="text/javascript" src="General.js"></script>
         <script type="text/javascript" src="Colors.js"></script>
@@ -171,79 +172,98 @@
             </div>
             <div style="display: inline-block;" id="click-notification-box"></div>
             <div style="display: inline-block;" id="hover-notification-box"></div>
-            <div class="expandable" id="action">
+            <div class="expandable" id="action" onclick="TransferClickToFirstChild(event)">
                 <button onclick="ExpandExpandable(event)" class="expand-button external">+</button>
                 <h1 onclick="ExpandExpandable(event)" class="dropdown-label">Actions</h1>
             </div>
             <div class="action expandable-content">
-                <p>Current Actions on Selected Line:</p>
-                <ol class="list">
+                <p style="display: none">Current Actions on Selected Line:</p>
+                <ol class="list" style="display: none">
 
                 </ol>
                 <label>Add Minecraft Command Action:</label>
                 <div style="display: flex;">
-                    <textarea style="display: inline;"></textarea>
+                    <textarea id="action-text-area" style="display: inline;"></textarea>
                     <div class="button">
-                        <button>Submit</button>
+                        <button onclick="AddAction()">Submit</button>
                     </div>
                 </div>
             </div>
-
-            <div class="expandable" id="conditional">
+            <br>
+            <br>
+            <div class="expandable" id="conditional" onclick="TransferClickToFirstChild(event)">
                 <button onclick="ExpandExpandable(event)" class="expand-button external">+</button>
                 <h1 onclick="ExpandExpandable(event)" class="dropdown-label">Conditions</h1>
             </div>
             <div class="conditional expandable-content">
-                <p>Current Conditions on Selected Line:</p>
-                <ul class="list">
+                <p style="display: none">Current Conditions on Selected Line:</p>
+                <ul class="list" style="display: none">
                     <li>
-                        <p>Variable Conditions:</p>
-                        <ol class="variables">
+                        <p class="custom-ll" style="display: none">Custom Conditions:</p>
+                        <ol class="custom" style="display: none">
 
                         </ol>
                     </li>
                     <li>
-                        <p>Random Conditions:</p>
-                        <ol class="random">
+                        <p class="score-ll" style="display: none">Scoreboard Conditions:</p>
+                        <ol class="score" style="display: none">
+
+                        </ol>
+                    </li>
+                    <li>
+                        <p class="random-ll" style="display: none">Random Conditions:</p>
+                        <ol class="random" style="display: none">
 
                         </ol>
                     </li>
                 </ul>
+                <label>Custom Condition:</label>
+                <div style="display: flex;">
+                    <div class="button inline if-unless">
+                        <button class="if-unless" onclick="ToggleIfUnless(event)">if</button>
+                    </div>
+                    <textarea id="condition-custom" style="display: inline;"></textarea>
+                    <div class="button inline">
+                        <button onclick="AddCustomCondition(event)">Submit</button>
+                    </div>
+                </div>
                 <div style="display: flex;">
                     <div>
                         <label style="display: block;">Scoreboard Name:</label>
-                        <textarea id="scoreboard" style="display: inline;"></textarea>
+                        <textarea id="condition-scoreboard" style="display: inline;"></textarea>
                     </div>
                     <select id="condition">
-                        <option value="equal">=</option>
-                        <option value="not-equal">!=</option>
-                        <option value="less-equal"><=</option>
-                        <option value="greater-equal">>=</option>
-                        <option value="less"><</option>
-                        <option value="greater">></option>
+                        <option value="=">=</option>
+                        <option value="!=">!=</option>
+                        <option value="<="><=</option>
+                        <option value=">=">>=</option>
+                        <option value="<"><</option>
+                        <option value=">">></option>
                     </select>
                     <div>
                         <label>Number to Compare To:</label>
-                        <textarea id="against" style="display: inline;"></textarea>
+                        <textarea id="condition-against" style="display: inline;"></textarea>
                     </div>
                     <div>
                         <label></label>
                         <div class="button">
-                            <button>Submit</button>
+                            <button onclick="AddScoreCondition(event)">Submit</button>
                         </div>
                     </div>
                 </div>
-                <label>Add Random Conditions:</label>
+                <label>Add Random* Conditions:</label>
                 <div style="display: flex;">
-                    <textarea style="display: inline;"></textarea>
+                    <textarea id="condition-random" style="display: inline;"></textarea>
                     <p class="large-unit">%</p>
                     <div class="button inline">
-                        <button>Submit</button>
+                        <button onclick="AddRandomCondition(event)">Submit</button>
                     </div>
                 </div>
                 <p>* Randomness is based on loot tables, and uses Antoha256M's simple function system, downloadable <a href="https://www.planetminecraft.com/data-pack/simple-randomizer-1-16-1-18/">here</a>. Also, see <a href="https://www.planetminecraft.com/blog/how-to-download-and-install-minecraft-data-packs/">how to install minecraft datapacks</a>.</p>
             </div>
-
+            <br>
+            <br>
+            <br>
             <div class="button">
                 <button onclick="Export()">
                     Export to MCFUNCTION Suite

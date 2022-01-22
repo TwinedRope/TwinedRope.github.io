@@ -306,7 +306,11 @@ function ShowHoverEvent(event, index) {
     hoverNotifBox.appendChild(hoverBox);
     hoverBox.style.top = event.clientY + yOffest;
     hoverBox.style.left = event.clientX + xOffset;
-    hoverBox.children[0].innerHTML = outputArray[index].event[1].value;
+    try {
+        hoverBox.children[0].innerHTML = outputArray[index].event[1].value;
+    } catch(e) {
+        //ignore errors to allow use in the dialogue generator
+    }
 }
 
 function RemoveShowHoverEvent() {

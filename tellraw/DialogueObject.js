@@ -9,6 +9,12 @@ class DialogueObject {
         this.NPC = NPC;
         this.link = link;
         this.collapsed = false;
+        this.actions = [];
+        this.conditions = {
+            scores: [],
+            random: [],
+            custom: []
+        };
         sequenceNum++;
     }
 }
@@ -72,6 +78,12 @@ function DiaToJSON(dia) {
     diaJSON.NPC = dia.NPC;
     diaJSON.link = dia.link;
     diaJSON.collapsed = dia.collapsed;
+    diaJSON.conditions = {
+        scores: dia.conditions.scores,
+        random: dia.conditions.random,
+        custom: dia.conditions.custom
+    };
+    diaJSON.actions = dia.actions;
     dia.children.forEach((child) => {
         diaJSON.children.push(DiaToJSON(child));
     });
@@ -81,6 +93,9 @@ function DiaToJSON(dia) {
 function JSONToDia(diaJSON, parent) {
     let diaChildren = [];
     let dia = new DialogueObject(diaJSON.tellraw, diaChildren, parent, diaJSON.NPC, diaJSON.link, diaJSON.collapsed);
+    dia.conditions.scores = diaJSON.conditions.scores;
+    dia.conditions.random = diaJSON.conditions.random;
+    dia.conditions.custom = diaJSON.conditions.custom;
     diaJSON.children.forEach((child) => {
         diaChildren.push(JSONToDia(child, dia));
     });

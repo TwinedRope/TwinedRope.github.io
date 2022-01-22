@@ -101,7 +101,7 @@ function RenderDialogue(dia, indent = 0) {
         if(seqNumVisible) {
             dialine.appendChild(seqNumIndicator);
             dialine.appendChild(document.createElement("BR"));
-            diatext.style.top = "-128px";
+            diatext.style.top = dia.link ? "-140px" : "-128px";
         }
         diatext.style.left = (baseLeft + 65) + 'px';
         expandButton.style.left = (baseLeft + 17) + 'px';
@@ -117,6 +117,8 @@ function RenderDialogue(dia, indent = 0) {
         linkIco.classList.add("link");
         linkIco.addEventListener("click", function(event) { TransferClickToText(event); });
         linkIco.style.left = (baseLeft + 60) + 'px';
+        if(seqNumVisible)
+            linkIco.style.top = "-122px";
         diatext.style.left = (baseLeft + 80) + 'px';
         dialine.appendChild(linkIco);
         dialine.appendChild(document.createElement("BR"));
@@ -152,13 +154,17 @@ function RefreshMainWindow() {
 }
 
 function DocClick(event) {
-    if(event.target.id == "main-window") {
-        document.querySelectorAll("p > span.text").forEach((element) => {
-            element.style.border = "none";
-            element.style.backgroundColor = "rgba(0, 0, 0, 0)";
-            element.style.margin = "1px";
-            Deselect();
-        });
+    try {
+        if(event.target.id == "main-window" || event.target.parentElement.id == "main-window" || event.target.parentElement.parentElement.id == "main-window" || event.target.parentElement.parentElement.parentElement.id == "main-window") {
+            document.querySelectorAll("p > span.text").forEach((element) => {
+                element.style.border = "none";
+                element.style.backgroundColor = "rgba(0, 0, 0, 0)";
+                element.style.margin = "1px";
+                Deselect();
+            });
+        }
+    } catch(e) {
+        //ignore errors for collapsing functionality
     }
 }
 
@@ -193,6 +199,8 @@ function Select(element) {
             element.classList.remove("link-highlight");
         });
     }
+    RefreshActionList();
+    RefreshConditionList();
 }
 
 function Deselect() {
@@ -209,6 +217,8 @@ function Deselect() {
     } catch(e) {
         //first run fails since outputBox needs to be defined
     }
+    RefreshActionList();
+    RefreshConditionList();
 }
 
 function TargetSelectorChange(event) {
@@ -322,4 +332,12 @@ function ExpandExpandable(event) {
 var ignoreTRErrors = false;
 function ToggleTRErrors() {
     ignoreTRErrors = !ignoreTRErrors;
+}
+
+function TransferClickToFirstChild(event) {
+    try {
+        event.target.children[0].click();
+    } catch(e) {
+        //ignore false errors
+    }
 }

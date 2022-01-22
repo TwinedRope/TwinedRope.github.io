@@ -287,7 +287,6 @@ button.expand-button.external:hover {
 
 .expandable {
     cursor: pointer;
-    margin-bottom: 50px;
 }
 
 .expandable-content {
@@ -309,4 +308,35 @@ button.expand-button.external:hover {
 .expandable-content .button {
     position: relative;   
     top: -13.5px;
+}
+
+.action-text {
+    display: inline-block;
+    width: calc(100% - 50px);
+}
+
+.action-x.button {
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 10px;
+}
+
+.action-x.button:hover {
+    margin-right: 9px;
+}
+
+.action-x button {
+    padding: 0px 5px;
+    font-size: 15px;
+}
+
+button.if-unless {
+    width: 170px;
+    height: 50px;
+}
+
+div.button.if-unless {
+    height: 50px;   
 }
