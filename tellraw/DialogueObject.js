@@ -123,6 +123,9 @@ function isChild(parent, childQuery) {
 
 //hidden via a collapsed parent
 function isHidden(dia) {
+    if(!document.querySelector('span.text[seq="' + dia.seqNum + '"]')) {
+        return true;
+    }
     if(dia.tellraw == 'ROOT' || dia.parent.tellraw == 'ROOT') {
         return false;
     }

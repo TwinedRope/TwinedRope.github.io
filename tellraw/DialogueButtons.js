@@ -30,7 +30,8 @@ function DAddPromise() {
                 break;
             }
         }
-        newElement.click();
+        Select(newElement);
+        RefreshMainWindow();
         resolve();
     });
 }
