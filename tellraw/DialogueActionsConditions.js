@@ -1,7 +1,8 @@
 function AddAction() {
     if(selected) {
         if(document.getElementById("action-text-area").value.length > 0) {
-            selected.actions.push(document.getElementById("action-text-area").value);
+            let sanitizedAction = document.getElementById("action-text-area").value.replace(/^\//, '');
+            selected.actions.push(sanitizedAction);
             RefreshActionList();
         } else {
             alert("Please enter an action to add to this line.");
@@ -78,15 +79,17 @@ function AddCustomCondition(event) {
     }
 }
 
+var numRandomConditions = 0;
 function AddRandomCondition(event) {
     if(selected) {
         if(document.getElementById("condition-random").value.length > 0) {
             var perc = parseFloat(document.getElementById("condition-random").value);
-            if(perc) {
+            if(perc > 0 && perc <= 100) {
+                numRandomConditions++;
                 selected.conditions.random.push(perc + "% chance");
                 RefreshConditionList();
             } else {
-                alert("Please enter a valid integer or floating point number in the percentage field.")
+                alert("Please enter a valid integer (1-100) or floating point number in the percentage field.")
             }
         } else {
             alert("Please enter a value in the percentage field")

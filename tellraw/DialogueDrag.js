@@ -31,7 +31,7 @@ function Drag(event) {
         dragTime++;
         if(dragTime > 10) {
             if(dragTime == 11) {
-                selected = FindBySeqNum(dialogue, dragging.getAttribute("seq"));
+                selected = FindBySeqNum(dialogue, dragging.getAttribute("seq"), dragging.getAttribute("link"));
                 selectedElement = dragging;
                 DCopy();
             }
@@ -67,7 +67,7 @@ function Drop(element) {
         let oldSelected = selected;
         let oldSelectedElement = selectedElement;
         //element.click();
-        selected = FindBySeqNum(dialogue, element.getAttribute("seq"));
+        selected = FindBySeqNum(dialogue, element.getAttribute("seq"), element.getAttribute("link"));
         selectedElement = element;
         if(!isChild(oldSelected, selected)) {
             DPaste(false, true).then(() => {

@@ -150,7 +150,13 @@ function RenderDialogue(dia, indent = 0) {
 
 function RefreshMainWindow() {
     document.getElementById("main-window").innerHTML = '';
+    let tempSelected = selected;
     RenderDialogue(dialogue);
+    if(!tempSelected || isHidden(tempSelected)) {
+        document.getElementById("main-window").lastChild.lastChild.click();
+    } else {
+        document.querySelector('span.text[seq="' + tempSelected.seqNum + '"]').click();
+    }
 }
 
 function DocClick(event) {
@@ -169,7 +175,7 @@ function DocClick(event) {
 }
 
 function Select(element) {
-    selected = FindBySeqNum(dialogue, element.getAttribute("seq"));
+    selected = FindBySeqNum(dialogue, element.getAttribute("seq"), element.getAttribute("link"));
     selectedElement = element;
     if(!element.classList.contains("root")) {
         document.getElementById("input").removeAttribute("disabled");

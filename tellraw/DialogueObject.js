@@ -1,11 +1,15 @@
 var sequenceNum = 0;
 
 class DialogueObject {
-    constructor(tellraw, children = [], parent = undefined, NPC, link, collapsed = false) {
+    constructor(tellraw, children = [], parent = undefined, NPC, link, collapsed = false, seqNum = false) {
         this.tellraw = tellraw;
         this.children = children;
         this.parent = parent;
-        this.seqNum = sequenceNum;
+        if(seqNum) {
+            this.seqNum = seqNum;
+        } else {
+            this.seqNum = sequenceNum;
+        }
         this.NPC = NPC;
         this.link = link;
         this.collapsed = false;
@@ -21,12 +25,12 @@ class DialogueObject {
 
 //Top-down recursion to find which dialogue object we clicked on
 //Possible room for performance improvements...
-function FindBySeqNum(dia, seq) {
-    if(dia.seqNum == seq) {
+function FindBySeqNum(dia, seq, link = false) {
+    if(dia.seqNum == seq && dia.link.toString() == link.toString()) {
         return dia;
     } else {
         for(var i = 0; i < dia.children.length; i++) {
-            let result = FindBySeqNum(dia.children[i], seq);
+            let result = FindBySeqNum(dia.children[i], seq, link);
             if(result != undefined) {
                 return result;
             }
@@ -37,7 +41,7 @@ function FindBySeqNum(dia, seq) {
 function FindBySeqNumElement(seq) {
     let texts = document.querySelectorAll("#main-window p span.text");
     for(var i = 0; i < texts.length; i++) {
-        if(texts[i].getAttribute("seq") == seq) {
+        if(texts[i].getAttribute("seq") == seq && texts[i].getAttribute("link") != texts[i].getAttribute("seq")) {
             return texts[i];
         }
     }
@@ -92,10 +96,11 @@ function DiaToJSON(dia) {
 
 function JSONToDia(diaJSON, parent) {
     let diaChildren = [];
-    let dia = new DialogueObject(diaJSON.tellraw, diaChildren, parent, diaJSON.NPC, diaJSON.link, diaJSON.collapsed);
+    let dia = new DialogueObject(diaJSON.tellraw, diaChildren, parent, diaJSON.NPC, diaJSON.link, diaJSON.collapsed, diaJSON.seqNum);
     dia.conditions.scores = diaJSON.conditions.scores;
     dia.conditions.random = diaJSON.conditions.random;
     dia.conditions.custom = diaJSON.conditions.custom;
+    dia.actions = diaJSON.actions;
     diaJSON.children.forEach((child) => {
         diaChildren.push(JSONToDia(child, dia));
     });
@@ -108,10 +113,24 @@ function isChild(parent, childQuery) {
     }
     let child = childQuery;
     while(child.parent.tellraw != 'ROOT') {
-        if(child.parent.seqNum == parent.seqNum) {
+        if(child.parent.seqNum == parent.seqNum && child.parent.link.toString() == parent.link.toString()) {
             return true;
         }
         child = child.parent;
+    }
+    return false;
+}
+
+//hidden via a collapsed parent
+function isHidden(dia) {
+    if(dia.tellraw == 'ROOT' || dia.parent.tellraw == 'ROOT') {
+        return false;
+    }
+    let curr = dia;
+    while(curr.parent) {
+        if(curr.parent.collapsed == true)
+            return true;
+        curr = curr.parent;
     }
     return false;
 }
