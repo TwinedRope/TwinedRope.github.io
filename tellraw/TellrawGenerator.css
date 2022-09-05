@@ -124,7 +124,7 @@ p {
     margin: 0px 0px;
 }
 
-.current-output, .tellraw-output {
+.current-output, .tellraw-output, .black-box {
     background-color: black;
     color: white;
     font-family: 'Courier New', Courier, monospace;

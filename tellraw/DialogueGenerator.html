@@ -19,6 +19,8 @@
         <script type="text/javascript" src="Warnings.js"></script>
         <script type="text/javascript" src="TellrawTranslation.js"></script>
         <script type="text/javascript" src="TellrawParser.js"></script>
+        <!--Libararies; not by me-->
+        <script type="text/javascript" src="../node_modules/@zip.js/zip.js/dist/zip.min.js"></script>
         <title>Dialogue Generator - A Twined_Rope Tool</title>
         <link rel="icon" href="Images/icon2.png">
     </head>
@@ -265,19 +267,18 @@
             <br>
             <br>
             <div class="button">
-                <button onclick="Export()">
-                    Export to MCFUNCTION Suite
+                <button onclick="Export(true)">
+                    Export to Standalone Datapack
+                    <img src="Images/loading.gif" id="export-loading-standalone" style="display: none; width: 18px; height: 18px; object-fit: cover;">
+                </button>
+            </div>
+            <div class="button">
+                <button onclick="Export(false)">
+                    Export MCFUNCTIONS Only
                     <img src="Images/loading.gif" id="export-loading" style="display: none; width: 18px; height: 18px; object-fit: cover;">
                 </button>
             </div>
             <div id="MCFunc-downloads">
-                <br>
-                <div class="button">
-                    <button style="display: none;" onclick="DownloadAllMCFuncs()">Download All Files</button>
-                </div>
-            </div>
-            <div id="export-downloads">
-
             </div>
 
             <!-- Footer -->
