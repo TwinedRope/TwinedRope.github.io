@@ -68,7 +68,16 @@ function ToggleIfUnless(event) {
 function AddCustomCondition(event) {
     if(selected) {
         if(document.getElementById("condition-custom").value.length > 0)  {
-            selected.conditions.custom.push(ifunless + " " + document.getElementById("condition-custom").value);
+            let condition = ifunless + " " + document.getElementById("condition-custom").value;
+            selected.conditions.custom.push(condition);
+            if(selected.link) {
+                let parentLink = FindBySeqNum(dialogue, 1);
+                parentLink.conditions.custom.push(condition);
+            } else {
+                FindAllLinkedDialogues(dialogue, selected.seqNum).forEach((link) => {
+                    link.conditions.custom.push(condition);
+                });
+            }
             RefreshConditionList();
         } else {
             alert("Please enter a custom condition to add to this dialogue line.");
@@ -180,12 +189,25 @@ function CreateConditionalItem(addQuery, value, i) {
 
 function RemoveCondition(event, addQuery) {
     let mainElement = event.target.parentElement.parentElement;
-    if(addQuery.indexOf("score") != -1) {
-        selected.conditions.scores.splice(mainElement.getAttribute("index"), 1);
-    } else if(addQuery.indexOf("random") != -1) {
-        selected.conditions.random.splice(mainElement.getAttribute("index"), 1);
-    } else if(addQuery.indexOf("custom") != -1) {
-        selected.conditions.custom.splice(mainElement.getAttribute("index"), 1);
+    RemoveConditionFromObject(mainElement, addQuery, selected);
+    if(selected.link) {
+        parent = FindBySeqNum(dialogue, selected.link);
+        RemoveConditionFromObject(mainElement, addQuery, parent);
+    } else {
+        FindAllLinkedDialogues(dialogue, selected.seqNum).forEach((link) => {
+            RemoveConditionFromObject(mainElement, addQuery, link);
+        });
     }
     RefreshConditionList();
+}
+
+//helper function for the above
+function RemoveConditionFromObject(mainElement, addQuery, diaObject) {
+    if(addQuery.indexOf("score") != -1) {
+        diaObject.conditions.scores.splice(mainElement.getAttribute("index"), 1);
+    } else if(addQuery.indexOf("random") != -1) {
+        diaObject.conditions.random.splice(mainElement.getAttribute("index"), 1);
+    } else if(addQuery.indexOf("custom") != -1) {
+        diaObject.conditions.custom.splice(mainElement.getAttribute("index"), 1);
+    }
 }

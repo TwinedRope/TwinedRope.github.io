@@ -119,6 +119,10 @@ function DPaste(aslink = false, cut = false) {
                     if(cut) {
                         pasteDia.seqNum = copiedSeqNum;
                     }
+                    if(!cut && !aslink) {
+                        //we need new sequence numbers for any objects that were copied and pasted
+                        CreateNewSeqNums(pasteDia);
+                    }
                     RefreshMainWindow();
                     Deselect();
                     resolve();
@@ -152,5 +156,13 @@ function DisableButtons() {
 function UnlockButtons() {
     document.querySelectorAll("table#side-btn-container button").forEach((el) => {
         el.removeAttribute("disabled");
+    });
+}
+
+function CreateNewSeqNums(parent) {
+    parent.seqNum = sequenceNum;
+    sequenceNum++;
+    parent.children.forEach((child) => {
+        CreateNewSeqNums(child);
     });
 }

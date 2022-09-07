@@ -75,20 +75,19 @@
                 <p>This tool links up (using functions) a set of tellraw commands that you input. You can save and load your previously-made dialogues if you need to make an edit to them. The buttons on the left allow you to create the tree structure that most dialogues follow, then you can edit/add your tellraw for the individual lines using the input boxes below that. Click events are automatically added to the player responses, any other actions you need to run upon the user clicking should be through the action or conditional systems (below the input boxes).</p>
                 <p>Upon clicking the export button at the bottom, the required MCFUNCTION files are created. It is very important that these are placed in a very specific spot within your save, so be sure to read the explaination below after exporting. The numbers on the name of each MCFUNCTION correspond to "sequence numbers" that are togglable here in case you need to debug or add custom functionality to a specific line after exporting.</p>
             </div>
-            <div class="button">
-                <button onclick="Save()">
-                    Save Project
-                    <img src="Images/loading.gif" id="save-loading" style="display: none; width: 18px; height: 18px; object-fit: cover;">
-                </button>
-            </div>
-            
             <div class="file-input">
                 <p>Load Project:</p>
                 <label>Accetped file types: .json</label>
                 <input type="file" id="json-import" accept=".json"></input>
             </div>
-            <div class="button">
-                <button onclick="ToggleSeqNum()">Toggle Sequence Numbers</button>
+            <div class="button" onclick="Save()">
+                <button>
+                    Save Project
+                    <img src="Images/loading.gif" id="save-loading" style="display: none; width: 18px; height: 18px; object-fit: cover;">
+                </button>
+            </div>
+            <div class="button" onclick="ToggleSeqNum()">
+                <button>Toggle Sequence Numbers</button>
             </div>
             <br>
             <br>
@@ -154,8 +153,8 @@
                 <p id="obfWarning" style="display: none; color: #ffff55;"> WARNING: performance decreased from obfuscated text. <a onclick="ToggleObfuscatedAnimation()">Toggle Animation</a></p>
             </label>
             <textarea id="input" oninput="SetOutdated()" onclick="UpdateCursorPositionClick(event)" onkeyup="KeyUpEventUpdate(event)" onkeydown="KeyDownEventUpdate(event)" onfocus="FocusEventHighlight(event)" onselect="HandleOutputSelection(event)"></textarea>
-            <div class="button">
-                <button id="submit-line" onclick="SubmitLine()">
+            <div class="button" onclick="SubmitLine()">
+                <button id="submit-line">
                     Submit
                 </button>
             </div>
@@ -166,7 +165,7 @@
             <a onclick="ShowHide(7, event)" style="float: right; margin-top:19px; padding-right: 19px">hide</a>
             <div style="display:block;"></div>
             <div id="7">
-                <label style="padding-top: 25px;" id="output-label">
+                <label style="margin-top: 25px;" id="output-label">
                     Current Output:
                 </label>
                  <!--<p id="cursor" style="position: relative; top: 35px; font-size: 30px; height: 0px; margin-top: -20px;">|</p>-->
@@ -186,8 +185,8 @@
                 <label>Add Minecraft Command Action:</label>
                 <div style="display: flex;">
                     <textarea id="action-text-area" style="display: inline;"></textarea>
-                    <div class="button">
-                        <button onclick="AddAction()">Submit</button>
+                    <div class="button" onclick="AddAction()">
+                        <button>Submit</button>
                     </div>
                 </div>
             </div>
@@ -221,12 +220,12 @@
                 </ul>
                 <label>Custom Condition:</label>
                 <div style="display: flex;">
-                    <div class="button inline if-unless">
-                        <button class="if-unless" onclick="ToggleIfUnless(event)">if</button>
+                    <div class="button inline if-unless" onclick="ToggleIfUnless(event)">
+                        <button class="if-unless">if</button>
                     </div>
                     <textarea id="condition-custom" style="display: inline;"></textarea>
-                    <div class="button inline">
-                        <button onclick="AddCustomCondition(event)">Submit</button>
+                    <div class="button inline" onclick="AddCustomCondition(event)">
+                        <button>Submit</button>
                     </div>
                 </div>
                 <div style="display: flex;">
@@ -248,8 +247,8 @@
                     </div>
                     <div>
                         <label></label>
-                        <div class="button">
-                            <button onclick="AddScoreCondition(event)">Submit</button>
+                        <div class="button" onclick="AddScoreCondition(event)">
+                            <button>Submit</button>
                         </div>
                     </div>
                 </div>
@@ -257,8 +256,8 @@
                 <div style="display: flex;">
                     <textarea id="condition-random" style="display: inline;"></textarea>
                     <p class="large-unit">%</p>
-                    <div class="button inline">
-                        <button onclick="AddRandomCondition(event)">Submit</button>
+                    <div class="button inline" onclick="AddRandomCondition(event)">
+                        <button>Submit</button>
                     </div>
                 </div>
                 <p>* Randomness is based on loot tables, and uses Antoha256M's simple function system, downloadable <a href="https://www.planetminecraft.com/data-pack/simple-randomizer-1-16-1-18/">here</a>. Also, see <a href="https://www.planetminecraft.com/blog/how-to-download-and-install-minecraft-data-packs/">how to install minecraft datapacks</a>.</p>
@@ -266,14 +265,14 @@
             <br>
             <br>
             <br>
-            <div class="button">
-                <button onclick="Export(true)">
+            <div class="button" onclick="Export(true)">
+                <button>
                     Export to Standalone Datapack
                     <img src="Images/loading.gif" id="export-loading-standalone" style="display: none; width: 18px; height: 18px; object-fit: cover;">
                 </button>
             </div>
-            <div class="button">
-                <button onclick="Export(false)">
+            <div class="button" onclick="Export(false)">
+                <button>
                     Export MCFUNCTIONS Only
                     <img src="Images/loading.gif" id="export-loading" style="display: none; width: 18px; height: 18px; object-fit: cover;">
                 </button>
