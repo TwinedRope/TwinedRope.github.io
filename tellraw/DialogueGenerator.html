@@ -89,6 +89,18 @@
             <div class="button" onclick="ToggleSeqNum()">
                 <button>Toggle Sequence Numbers</button>
             </div>
+            <div class="button undoers disabled" onclick="Redo()">
+                <button disabled title="Redo">
+                    <img class="hidden" src="Images/DG_Redo.png" />
+                    <img src="Images/DG_Redo_disabled.png" />
+                </button>
+            </div>
+            <div class="button undoers disabled" onclick="Undo()">
+                <button disabled title="Undo">
+                    <img class="hidden" src="Images/DG_Undo.png" />
+                    <img src="Images/DG_Undo_disabled.png" />
+                </button>
+            </div>
             <br>
             <br>
             <div class="side-btn-flex">
@@ -153,7 +165,7 @@
                 <p id="obfWarning" style="display: none; color: #ffff55;"> WARNING: performance decreased from obfuscated text. <a onclick="ToggleObfuscatedAnimation()">Toggle Animation</a></p>
             </label>
             <textarea id="input" oninput="SetOutdated()" onclick="UpdateCursorPositionClick(event)" onkeyup="KeyUpEventUpdate(event)" onkeydown="KeyDownEventUpdate(event)" onfocus="FocusEventHighlight(event)" onselect="HandleOutputSelection(event)"></textarea>
-            <div class="button" onclick="SubmitLine()">
+            <div class="button" onclick="SubmitLine(true)">
                 <button id="submit-line">
                     Submit
                 </button>

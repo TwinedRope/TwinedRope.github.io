@@ -70,13 +70,14 @@ function Drop(element) {
         selected = FindBySeqNum(dialogue, element.getAttribute("seq"), element.getAttribute("link"));
         selectedElement = element;
         if(!isChild(oldSelected, selected)) {
-            DPaste(false, true).then(() => {
+            DPaste(false, true, true).then(() => {
                 selected = oldSelected;
                 selectedElement = oldSelectedElement;
-                DDeleteRecursive();
+                DDeleteRecursive(true);
                 Deselect();
+                updateUndoList(); //we have "supressed" the updates from the original paste and delete to make it explicit here, and only when the drag succeeds
             }).catch(() => {
-                //ignore errors
+                //ignore errors - errors handled in paste function
                 Deselect();
             });
         } else {

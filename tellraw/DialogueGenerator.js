@@ -1,18 +1,9 @@
 /**
- * Things to Do:
- *  - Conversion to MCFUNCTION system
- *  - Conditional system with scoreboard variables
- *      - Integrate with MCFUN system
- *  - Conditional random system
- *      - Integrate with MCFUN system
- *  - Actions upon arrival
- *  - Explain everything
- *  
- * Improvements:
- *  - Collapse state is not store upon load/save
- *  - Double-click a link not to automatically select the parent
- *  - Certain colors won't parse. Check constants.js
- *  - clean up unicode issues invovling '"'
+ * Dialoguegenerator.js
+ * 
+ * The main file with the most essential functions
+ * to the tool. Everything to do with the main
+ * window is done in here.
  */
 
 const bracketE = '˪';
@@ -76,7 +67,7 @@ function RenderDialogue(dia, indent = 0) {
         let currentParent = dia.parent;
         for(var j = 0; j < indent; j++) {
             let indentEl;
-            if(currentParent.parent != undefined && currentParent.parent.children[currentParent.parent.children.length - 1] != currentParent) {
+            if(currentParent.parent != undefined && currentParent.parent.children[currentParent.parent.children.length - 1].seqNum != currentParent.seqNum) {
                 indentEl = document.createElement("IMG");
                 indentEl.src = "Images/Dash.png";
             } else {
@@ -125,7 +116,7 @@ function RenderDialogue(dia, indent = 0) {
     }
     dialine.appendChild(diatext);
     connector.classList.add("connector");
-    if(dia.parent == undefined || dia.parent.children[dia.parent.children.length - 1] == dia) {
+    if(dia.parent == undefined || dia.parent.children[dia.parent.children.length - 1].seqNum == dia.seqNum) {
         connector.innerText = bracketE;
     } else {
         connector.innerText = bracketM;
@@ -148,11 +139,11 @@ function RenderDialogue(dia, indent = 0) {
     }
 }
 
-function RefreshMainWindow() {
+function RefreshMainWindow(dragSideEffect = false) {
     document.getElementById("main-window").innerHTML = '';
     let tempSelected = selected;
     RenderDialogue(dialogue);
-    if(!tempSelected || isHidden(tempSelected)) {
+    if(!dragSideEffect && (!tempSelected || isHidden(tempSelected))) {
         document.getElementById("main-window").lastChild.lastChild.click();
     } else {
         document.querySelector('span.text[seq="' + tempSelected.seqNum + '"]').click();
@@ -248,12 +239,12 @@ function ClickLine(event) {
     }, 1);
 }
 
-function SubmitLine() {
+function SubmitLine(userActivated = false) {
     try {
         ImportTellrawCode(true);
     } catch(e) {
         if(!ignoreTRErrors) {
-            alert("The tellraw you entered could not be parsed. Consider submitting a bug report if this seems wrong.");
+            alert("The tellraw you entered could not be parsed. Consider submitting a bug report if this seems off. Ignore the errors with the checkbox beside this button.");
             return;
         } //otherwise we want our system to give its best effort into decifering what is going on
     }
@@ -291,6 +282,8 @@ function SubmitLine() {
     }
     selectedElement.innerHTML = newOutput;
     outputBox.classList.remove("disabled");
+    if(userActivated) //there are many scenarios where the system itself needs to submit a line using this function
+        updateUndoList();
 }
 
 function SetOutdated() {

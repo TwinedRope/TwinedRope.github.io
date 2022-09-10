@@ -79,6 +79,7 @@ function AddCustomCondition(event) {
                 });
             }
             RefreshConditionList();
+            updateUndoList();
         } else {
             alert("Please enter a custom condition to add to this dialogue line.");
         }
@@ -95,8 +96,18 @@ function AddRandomCondition(event) {
             var perc = parseFloat(document.getElementById("condition-random").value);
             if(perc > 0 && perc <= 100) {
                 numRandomConditions++;
-                selected.conditions.random.push(perc + "% chance");
+                let condition = perc + "% chance";
+                selected.conditions.random.push(condition);
+                if(selected.link) {
+                    let parentLink = FindBySeqNum(dialogue, 1);
+                    parentLink.conditions.random.push(condition);
+                } else {
+                    FindAllLinkedDialogues(dialogue, selected.seqNum).forEach((link) => {
+                        link.conditions.random.push(condition);
+                    });
+                }
                 RefreshConditionList();
+                updateUndoList();
             } else {
                 alert("Please enter a valid integer (1-100) or floating point number in the percentage field.")
             }
@@ -112,8 +123,18 @@ function AddScoreCondition(event) {
     if(selected) {
         var against = parseInt(document.getElementById("condition-against").value);
         if(document.getElementById("condition-scoreboard").value.length > 0 && document.getElementById("condition-against").value.length > 0 && (against || against == 0)) {
-            selected.conditions.scores.push("if " + document.getElementById("condition-scoreboard").value + " " + document.getElementById("condition").value + " " + against);
+            let condition = "if " + document.getElementById("condition-scoreboard").value + " " + document.getElementById("condition").value + " " + against
+            selected.conditions.scores.push(condition);
+            if(selected.link) {
+                let parentLink = FindBySeqNum(dialogue, 1);
+                parentLink.conditions.scores.push(condition);
+            } else {
+                FindAllLinkedDialogues(dialogue, selected.seqNum).forEach((link) => {
+                    link.conditions.scores.push(condition);
+                });
+            }
             RefreshConditionList();
+            updateUndoList();
         } else {
             alert("Please enter a scoreboard name and a number to compare against.")
         }
@@ -199,6 +220,7 @@ function RemoveCondition(event, addQuery) {
         });
     }
     RefreshConditionList();
+    updateUndoList();
 }
 
 //helper function for the above

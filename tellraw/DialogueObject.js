@@ -1,7 +1,7 @@
 var sequenceNum = 0;
 
 class DialogueObject {
-    constructor(tellraw, children = [], parent = undefined, NPC, link, collapsed = false, seqNum = false) {
+    constructor(tellraw, children = [], parent = undefined, NPC, link, collapsed = false, seqNum = false, updateSeqNum = true) {
         this.tellraw = tellraw;
         this.children = children;
         this.parent = parent;
@@ -19,7 +19,8 @@ class DialogueObject {
             random: [],
             custom: []
         };
-        sequenceNum++;
+        if(updateSeqNum)
+            sequenceNum++;
     }
 }
 

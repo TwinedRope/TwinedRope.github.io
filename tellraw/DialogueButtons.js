@@ -1,8 +1,10 @@
+var dialogueHistory = [dialogue = new DialogueObject('ROOT', [], undefined, false, false, false, 0, false)];
+var undoIndex = 0;
+
 function DAdd() {
     DAddPromise().then(() => {
         UnlockButtons();
     }).catch(() => {
-        alert("Please select a dialogue line as the parent to add to.");
         UnlockButtons();
     });
 }
@@ -11,6 +13,10 @@ function DAddPromise() {
     return new Promise((resolve, reject) => {
         DisableButtons();
         if(selected == undefined) {
+            alert("Please select a dialogue line as the parent to add to.");
+            reject();
+        } else if(selected.link) {
+            alert("You cannot add a child dialogue line to a link. Add it to the parent dialogue line instead.");
             reject();
         } else {
             if(selected.collapsed) {
@@ -32,11 +38,12 @@ function DAddPromise() {
         }
         Select(newElement);
         RefreshMainWindow();
+        updateUndoList();
         resolve();
     });
 }
 
-function DDeleteRecursive() {
+function DDeleteRecursive(dragSideEffect = false) {
     if(selected == undefined) {
         alert("Please select a dialogue line to delete.");
         return;
@@ -47,7 +54,9 @@ function DDeleteRecursive() {
     }
     selected.parent.children.splice(selected.parent.children.indexOf(selected), 1);
     
-    RefreshMainWindow();
+    if(!dragSideEffect)
+        updateUndoList();
+    RefreshMainWindow(dragSideEffect);
 }
 
 var copied = false;
@@ -73,7 +82,7 @@ function DCopy() {
     copiedSeqNum = selected.seqNum;
 }
 
-function DPaste(aslink = false, cut = false) {
+function DPaste(aslink = false, cut = false, dragSideEffect = false) {
     var mySelected = selected;
     var mySelectedElement = selectedElement;
     return new Promise((resolve, reject) => {
@@ -93,6 +102,11 @@ function DPaste(aslink = false, cut = false) {
                     let pasteDia = JSONToDia(JSON.parse(data), mySelected);
                     if(aslink && pasteDia.link) {
                         alert("Cannot paste a link as link. Use the regular paste button instead.");
+                        reject();
+                        return;
+                    }
+                    if(mySelected.link && (mySelected.NPC != pasteDia.NPC)) {
+                        alert("You cannot add a child dialogue line to a link. Add it to the parent dialogue line instead.");
                         reject();
                         return;
                     }
@@ -125,6 +139,8 @@ function DPaste(aslink = false, cut = false) {
                     }
                     RefreshMainWindow();
                     Deselect();
+                    if(!dragSideEffect)
+                        updateUndoList();
                     resolve();
                 });
             } else {
@@ -165,4 +181,98 @@ function CreateNewSeqNums(parent) {
     parent.children.forEach((child) => {
         CreateNewSeqNums(child);
     });
+}
+
+//call this after every dialogue state change
+function updateUndoList() {
+    //requires a (recursive) deep copy of the current dialogue object
+    if(dialogueHistory.length < 100) {
+        undoIndex++;
+        dialogueHistory.splice(undoIndex, 100, RecursiveDeepCopyDialogue(dialogue));
+        DeepCopyAddParentRefs(dialogueHistory[undoIndex]);
+    } else {
+        undoIndex++;
+        dialogueHistory.splice(0, 1);
+        dialogueHistory.splice(undoIndex, 100, RecursiveDeepCopyDialogue(dialogue));
+        DeepCopyAddParentRefs(dialogueHistory[undoIndex]);
+    }
+    UpdateUndoerButtonStates();
+    console.log("Updated Undo List: " + undoIndex);
+}
+
+function RecursiveDeepCopyDialogue(dia) {
+    let copiedChildList = [];
+    dia.children.forEach((child) => {
+        copiedChildList.push(RecursiveDeepCopyDialogue(child));
+    });
+    let deepCopy = new DialogueObject(dia.tellraw, copiedChildList, dia.parent, dia.NPC, dia.link, dia.collapsed, dia.seqNum, false);
+    return deepCopy;
+}
+
+function DeepCopyAddParentRefs(parent) {
+    parent.children.forEach((child) => {
+        child.parent = parent;
+        DeepCopyAddParentRefs(child);
+    });
+}
+
+function Undo() {
+    if(undoIndex <= 0)
+        return;
+    undoIndex--;
+    dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
+    DeepCopyAddParentRefs(dialogue);
+    console.log("Undid: " + undoIndex);
+    RefreshMainWindow();
+    UpdateUndoerButtonStates();
+}
+
+function Redo() {
+    if(undoIndex >= dialogueHistory.length - 1)
+        return;
+    undoIndex++;
+    dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
+    DeepCopyAddParentRefs(dialogue);
+    console.log("Redid: " + undoIndex);
+    RefreshMainWindow();
+    UpdateUndoerButtonStates();
+}
+
+function DisableUndo() {
+    document.querySelectorAll("div.button.undoers")[1].classList.add("disabled");
+    document.querySelectorAll("div.button.undoers")[1].querySelectorAll("img")[0].classList.add("hidden");
+    document.querySelectorAll("div.button.undoers")[1].querySelectorAll("img")[1].classList.remove("hidden");
+    document.querySelectorAll("div.button.undoers button")[1].setAttribute("disabled", "");
+}
+
+function DisableRedo() {
+    document.querySelectorAll("div.button.undoers")[0].classList.add("disabled");
+    document.querySelectorAll("div.button.undoers")[0].querySelectorAll("img")[0].classList.add("hidden");
+    document.querySelectorAll("div.button.undoers")[0].querySelectorAll("img")[1].classList.remove("hidden");
+    document.querySelectorAll("div.button.undoers button")[0].setAttribute("disabled", "");
+}
+
+function EnableUndo() {
+    document.querySelectorAll("div.button.undoers")[1].classList.remove("disabled");
+    document.querySelectorAll("div.button.undoers")[1].querySelectorAll("img")[0].classList.remove("hidden");
+    document.querySelectorAll("div.button.undoers")[1].querySelectorAll("img")[1].classList.add("hidden");
+    document.querySelectorAll("div.button.undoers button")[1].removeAttribute("disabled");
+}
+
+function EnableRedo() {
+    document.querySelectorAll("div.button.undoers")[0].classList.remove("disabled");
+    document.querySelectorAll("div.button.undoers")[0].querySelectorAll("img")[0].classList.remove("hidden");
+    document.querySelectorAll("div.button.undoers")[0].querySelectorAll("img")[1].classList.add("hidden");
+    document.querySelectorAll("div.button.undoers button")[0].removeAttribute("disabled");
+}
+
+function UpdateUndoerButtonStates() {
+    if(undoIndex < dialogueHistory.length - 1)
+        EnableRedo();
+    if(undoIndex > 0)
+        EnableUndo();
+    if(undoIndex >= dialogueHistory.length - 1)
+        DisableRedo();
+    if(undoIndex <= 0)
+        DisableUndo();
 }

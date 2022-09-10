@@ -83,7 +83,7 @@ async function Export(standalone) {
                 addedMCFuncs["init"] = CreateInitFile(dialogue);
                 addedMCFuncs["lock"] = CreateLockFile(dialogue);
                 addedMCFuncs["start"] = CreateStartFile(dialogue);
-                MCFuncs.forEach((func) => {
+                MCFuncs.reverse().forEach((func) => {
                     let seqNum = parseInt(func.slice(145));
                     addedMCFuncs[namePrefix + "" + seqNum] = func;
                     //AddMCFuncLink(namePrefix + "" + seqNum, func);
