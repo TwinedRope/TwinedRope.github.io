@@ -106,9 +106,35 @@ function DPaste(aslink = false, cut = false, dragSideEffect = false) {
                         return;
                     }
                     if(mySelected.link && (mySelected.NPC != pasteDia.NPC)) {
-                        alert("You cannot add a child dialogue line to a link. Add it to the parent dialogue line instead.");
+                        alert("You cannot paste a child dialogue line to a link. Add it to the parent dialogue of the link instead.");
                         reject();
                         return;
+                    }
+                    if(mySelected.tellraw == "ROOT" && !pasteDia.NPC) {
+                        alert("You cannot paste a player dialogue on the root node.");
+                        reject();
+                        return;
+                    }
+                    if(aslink && pasteDia.parent != undefined) {
+                        let siblingFlag = false;
+                        if(mySelected.NPC != pasteDia.NPC) {
+                            mySelected.children.forEach((child) => {
+                                if(child.seqNum == pasteDia.seqNum) {
+                                    siblingFlag = true;
+                                }
+                            }); 
+                        } else {
+                            mySelected.parent.children.forEach((child) => {
+                                if(child.seqNum == pasteDia.seqNum) {
+                                    siblingFlag = true;
+                                }
+                            });
+                        }
+                        if(siblingFlag) {
+                            alert("You cannot add a link as a sibling to the link's parent. Consider adding a new sibling, then linking to the original's next dialogue.");
+                            reject();
+                            return;
+                        }
                     }
                     if(pasteDia.NPC == mySelected.NPC) {
                         if(mySelected.parent) {
