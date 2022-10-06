@@ -38,6 +38,25 @@ function DialogueInit() {
 
     document.querySelector("#action button").click();
     document.querySelector("#conditional button").click();
+
+    document.body.addEventListener("keydown", (event) => { MapButtonsDown(event) });
+    document.body.addEventListener("keyup", (event) => { MapButtonsUp(event) });
+}
+
+var autoSubmit = false;
+var autoSubmitIntervalID;
+function ToggleAutoSubmitLine() {
+    autoSubmit = !autoSubmit;
+    console.log("audo submit: " + (autoSubmit ? "on" : "off"));
+    if(autoSubmit) {
+        autoSubmitIntervalID = setInterval(() => {
+            console.log("submitting...");
+            SubmitLine();
+        }, 500);
+    } else {
+        clearInterval(autoSubmitIntervalID);
+        autoSubmitEventListenter = undefined;
+    }
 }
 
 //NOTE: Recursive
@@ -124,6 +143,8 @@ function RenderDialogue(dia, indent = 0) {
     diatext.classList.add("text");
     diatext.setAttribute("seq", dia.seqNum);
     diatext.setAttribute("link", dia.link);
+    if(dia.link)
+        diatext.addEventListener("click", function() {DoubleClickDetector()});
     diatext.addEventListener("click", function(event) {ClickLine(event)});
     diatext.addEventListener("mousedown", function(event) {ActivateDrag(event)});
     diatext.addEventListener("mouseover", function(event) {DropZone(event)});
@@ -146,7 +167,7 @@ function RefreshMainWindow(dragSideEffect = false) {
     if(!dragSideEffect && (!tempSelected || isHidden(tempSelected))) {
         document.getElementById("main-window").lastChild.lastChild.click();
     } else {
-        document.querySelector('span.text[seq="' + tempSelected.seqNum + '"]').click();
+        document.querySelector('span.text[seq="' + tempSelected.seqNum + '"][link="' + tempSelected.link + '"]').click();
     }
 }
 
@@ -172,6 +193,9 @@ function Select(element) {
         document.getElementById("input").removeAttribute("disabled");
         document.getElementById("submit-line").removeAttribute("disabled");
         document.getElementById("submit-line").parentElement.classList.remove("disabled");
+        document.getElementById("parse-checkbox").removeAttribute("disabled");
+        document.getElementById("auto-checkbox").removeAttribute("disabled");
+        document.querySelectorAll(".submit-related").forEach((el) => { el.classList.remove("disabled") });
         try {
             outputBox.classList.remove("disabled");
         } catch(e) {
@@ -183,6 +207,9 @@ function Select(element) {
         element.innerText = "Root";
         outputBox.classList.add("disabled");
         document.getElementById("input").setAttribute("disabled", "");
+        document.getElementById("parse-checkbox").setAttribute("disabled", "");
+        document.getElementById("auto-checkbox").setAttribute("disabled", "");
+        document.querySelectorAll(".submit-related").forEach((el) => { el.classList.add("disabled") });
         outputBox.innerText = "ROOT";
         document.getElementById("input").value = "ROOT";
     }
@@ -227,6 +254,7 @@ function TargetSelectorChange(event) {
 }
 
 function ClickLine(event) {
+    if(!event.target.parentElement) return;
     let element = event.target;
     if(event.target.parentElement.tagName != "P") {
         element = event.target.parentElement;
@@ -240,13 +268,8 @@ function ClickLine(event) {
 }
 
 function SubmitLine(userActivated = false) {
-    try {
-        ImportTellrawCode(true);
-    } catch(e) {
-        if(!ignoreTRErrors) {
-            alert("The tellraw you entered could not be parsed. Consider submitting a bug report if this seems off. Ignore the errors with the checkbox beside this button.");
-            return;
-        } //otherwise we want our system to give its best effort into decifering what is going on
+    if(!ImportTellrawCode(true, undefined, alertLvl.fatal && !ignoreTRErrors)) {
+        return;
     }
     let newTellraw = document.getElementById("input").value;
     let newOutput = "";
@@ -339,4 +362,31 @@ function TransferClickToFirstChild(event) {
     } catch(e) {
         //ignore false errors
     }
+}
+
+var doubleClicker = 0;
+
+// assumes that event.target is a link child
+function DoubleClickDetector() {
+    doubleClicker++;
+    if(doubleClicker < 2) {
+        setTimeout(() => {
+            DoubleClickTimeout();
+        }, 500);
+    }
+    if(doubleClicker >= 2) {
+        window.getSelection().removeAllRanges();
+        doubleClicker = 0;
+        let tempSelected = selected;
+        isHidden(FindBySeqNum(dialogue, selected.link), true);
+        RefreshMainWindow();
+        setTimeout(() => { //this timeout is required for an issue where the red dashed border appears after selection
+            Select(FindBySeqNumElement(tempSelected.link));
+            RefreshMainWindow();
+        }, 1);
+    }
+}
+
+function DoubleClickTimeout() {
+    doubleClicker = 0;
 }

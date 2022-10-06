@@ -196,6 +196,47 @@ select {
     cursor: not-allowed;
 }
 
+.checkbox-wrapper {
+    display: inline-block;
+    border: 3px solid black;
+    background-color: rgb(109, 109, 109);
+    margin-left: 5px;
+    padding: 1px 1px 1px 0px;
+    cursor: pointer;
+}
+
+.checkbox-wrapper input {
+    padding: 10px 0px;
+    cursor: pointer;
+}
+
+.disabled, .disabled input {
+    cursor: not-allowed !important;
+}
+
+.checkbox-wrapper:hover:not(.disabled) {
+    border: 3px solid white;
+}
+
+.check-box-wrapper.disabled {
+    background-color: rgb(75, 75, 75);
+    color: rgb(109, 109, 109);
+    cursor: not-allowed;
+}
+
+.checkbox-label-text {
+    color: darkgray;
+    text-shadow: 3px 3px black;
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 50px;
+}
+
+.check-box-wrapper.disabled.hover {
+    border: 3px solid black;
+}
+
 button:disabled {
     color: rgb(109, 109, 109);
     background-color: rgb(75, 75, 75);

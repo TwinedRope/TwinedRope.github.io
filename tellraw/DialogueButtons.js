@@ -62,7 +62,7 @@ function DDeleteRecursive(dragSideEffect = false) {
 var copied = false;
 var copiedSeqNum;
 
-function DCopy() {
+function DCopy(cut = false) {
     if(selected == undefined) {
         alert("Please select a dialogue line to copy.");
         return;
@@ -77,12 +77,15 @@ function DCopy() {
         } else {
             alert("Your browser does not allow websites (such as this one) to access your clipboard. Please allow this to use the paste feature.");
         }
+    }).then(() => {
+        if(cut)
+            DDeleteRecursive();
     });
     copied = true;
     copiedSeqNum = selected.seqNum;
 }
 
-function DPaste(aslink = false, cut = false, dragSideEffect = false) {
+function DPaste(aslink = false, dragSideEffect = false) {
     var mySelected = selected;
     var mySelectedElement = selectedElement;
     return new Promise((resolve, reject) => {
@@ -156,10 +159,7 @@ function DPaste(aslink = false, cut = false, dragSideEffect = false) {
                         pasteDia.children = []; //required for "link"s
                         pasteDia.link = copiedSeqNum;
                     }
-                    if(cut) {
-                        pasteDia.seqNum = copiedSeqNum;
-                    }
-                    if(!cut && !aslink) {
+                    if(!aslink) {
                         //we need new sequence numbers for any objects that were copied and pasted
                         CreateNewSeqNums(pasteDia);
                     }
@@ -301,4 +301,206 @@ function UpdateUndoerButtonStates() {
         DisableRedo();
     if(undoIndex <= 0)
         DisableUndo();
+}
+
+const KeyCodes = {
+    shift: 16,
+    ctrl: 17,
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+    insert: 45,
+    delete: 46,
+    c: 67,
+    i: 73,
+    s: 83,
+    t: 84,
+    v: 86,
+    x: 88,
+    y: 89,
+    z: 90
+}
+
+var buttonStates = {
+    shift: 0,
+    ctrl: 0,
+    left: 0,
+    up: 0,
+    right: 0,
+    down: 0,
+    insert: 0,
+    delete: 0,
+    c: 0,
+    i: 0,
+    s: 0,
+    t: 0,
+    v: 0,
+    x: 0,
+    y: 0,
+    z: 0
+}
+
+function MapButtonsDown(event) {
+    if(document.activeElement.id == "input") return;
+    switch(event.keyCode) {
+        case KeyCodes.shift:
+            buttonStates.shift = 1;
+        break;
+        case KeyCodes.ctrl:
+            buttonStates.ctrl = 1;
+        break;
+        case KeyCodes.left:
+            if(selected.parent)
+                FindBySeqNumElement(selected.parent.seqNum).click();
+            buttonStates.left = 1;
+        break;
+        case KeyCodes.up:
+            buttonStates.up = 1;
+        break;
+        case KeyCodes.right:
+            if(selected.children.length > 0) {
+                if(selected.collapsed) {
+                    let seqNumTarget = selected.children[0].seqNum;
+                    ToggleCollapse(undefined, selected);
+                    setTimeout(() => {
+                        FindBySeqNumElement(seqNumTarget).click();
+                    }, 1);
+                } else {
+                    FindBySeqNumElement(selected.children[0].seqNum).click();
+                }
+            }
+            buttonStates.right = 1;
+        break;
+        case KeyCodes.down:
+            buttonStates.down = 1;
+        break;
+        case KeyCodes.insert:
+            DAdd();
+            buttonStates.insert = 1;
+        break;
+        case KeyCodes.delete:
+            DDeleteRecursive();
+            buttonStates.delete = 1;
+        break;
+        case KeyCodes.c:
+            if(buttonStates.ctrl == 1) {
+                DCopy();
+            }
+            buttonStates.c = 1;
+        break;
+        case KeyCodes.i:
+            if(buttonStates.ctrl == 1) {
+                document.querySelector("#json-import").click();
+                ResetAfterAction();
+            }
+            buttonStates.i = 1;
+        break;
+        case KeyCodes.s:
+            if(buttonStates.ctrl == 1) {
+                document.querySelector("#save-project").click();
+                ResetAfterAction();
+            }
+            buttonStates.s = 1;
+        break;
+        case KeyCodes.t:
+            if(buttonStates.ctrl == 1) {
+                document.querySelector("#seq-num-toggle").click();
+            }
+            buttonStates.t = 1;
+        break;
+        case KeyCodes.v:
+            if(buttonStates.ctrl == 1) {
+                if(buttonStates.shift == 1) {
+                    DPaste(true, false, false);
+                } else {
+                    DPaste(false, false, false);
+                }
+            }
+            buttonStates.v = 1;
+        break;
+        case KeyCodes.x:
+            if(buttonStates.ctrl == 1) {
+                DPaste(false, true, false);
+            }
+            buttonStates.x = 1;
+        break;
+        case KeyCodes.y:
+            if(buttonStates.ctrl == 1) {
+                Redo();
+            }
+            buttonStates.y = 1;
+        break;
+        case KeyCodes.z:
+            if(buttonStates.ctrl == 1) {
+                Undo();
+            }
+            buttonStates.z = 1;
+        break;
+    }
+}
+
+function MapButtonsUp(event, override = false) {
+    var codeOfTheKey;
+    if(override) {
+        codeOfTheKey = override
+    } else {
+        codeOfTheKey = event.keyCode
+    }
+    switch(codeOfTheKey) {
+        case KeyCodes.shift:
+            buttonStates.shift = 0;
+        break;
+        case KeyCodes.ctrl:
+            buttonStates.ctrl = 0;
+        break;
+        case KeyCodes.left:
+            buttonStates.left = 0;
+        break;
+        case KeyCodes.up:
+            buttonStates.up = 0;
+        break;
+        case KeyCodes.right:
+            buttonStates.right = 0;
+        break;
+        case KeyCodes.down:
+            buttonStates.down = 0;
+        break;
+        case KeyCodes.insert:
+            buttonStates.insert = 0;
+        break;
+        case KeyCodes.delete:
+            buttonStates.delete = 0;
+        break;
+        case KeyCodes.c:
+            buttonStates.c = 0;
+        break;
+        case KeyCodes.i:
+            buttonStates.i = 0;
+        break;
+        case KeyCodes.s:
+            buttonStates.s = 0;
+        break;
+        case KeyCodes.t:
+            buttonStates.t = 0;
+        break;
+        case KeyCodes.v:
+            buttonStates.v = 0;
+        break;
+        case KeyCodes.x:
+            buttonStates.x = 0;
+        break;
+        case KeyCodes.y:
+            buttonStates.y = 0;
+        break;
+        case KeyCodes.z:
+            buttonStates.z = 0;
+        break;
+    }
+}
+
+function ResetAfterAction(keysToReset = [KeyCodes.ctrl, KeyCodes.shift]) {
+    keysToReset.forEach((key) => {
+        MapButtonsUp(undefined, key);
+    });
 }

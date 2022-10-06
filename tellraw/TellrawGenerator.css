@@ -175,7 +175,7 @@ p {
     border: 3px solid white;
 }
 
-.text-triggered-checkbox-hover {
+.text-triggered-checkbox-hover:not(.disabled) {
     border: 3px solid white;
 }
 

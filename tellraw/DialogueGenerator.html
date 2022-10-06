@@ -78,25 +78,25 @@
             <div class="file-input">
                 <p>Load Project:</p>
                 <label>Accetped file types: .json</label>
-                <input type="file" id="json-import" accept=".json"></input>
+                <input type="file" id="json-import" accept=".json" title="Import Project (Ctrl+I)"></input>
             </div>
-            <div class="button" onclick="Save()">
+            <div id="save-project" class="button" onclick="Save()" title="Save (Ctrl+Alt+S)">
                 <button>
                     Save Project
                     <img src="Images/loading.gif" id="save-loading" style="display: none; width: 18px; height: 18px; object-fit: cover;">
                 </button>
             </div>
-            <div class="button" onclick="ToggleSeqNum()">
+            <div id="seq-num-toggle" class="button" onclick="ToggleSeqNum()" title="Toggle Sequence Numbers (Ctrl+Alt+T)">
                 <button>Toggle Sequence Numbers</button>
             </div>
             <div class="button undoers disabled" onclick="Redo()">
-                <button disabled title="Redo">
+                <button disabled title="Redo (Ctrl+Y)">
                     <img class="hidden" src="Images/DG_Redo.png" />
                     <img src="Images/DG_Redo_disabled.png" />
                 </button>
             </div>
             <div class="button undoers disabled" onclick="Undo()">
-                <button disabled title="Undo">
+                <button disabled title="Undo (Ctrl+Z)">
                     <img class="hidden" src="Images/DG_Undo.png" />
                     <img src="Images/DG_Undo_disabled.png" />
                 </button>
@@ -107,12 +107,12 @@
                 <table id="side-btn-container">
                     <tr>
                         <td>
-                            <button onclick="DAdd()" title="Add"><img src="Images/DG_add.png"></button>
+                            <button onclick="DAdd()" title="Add (Insert)"><img src="Images/DG_add.png"></button>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <button onclick="DDeleteRecursive()" title="Delete Recursively"><img src="Images/DG_delete.png"></button>
+                            <button onclick="DDeleteRecursive()" title="Delete Recursively (Delete)"><img src="Images/DG_delete.png"></button>
                         </td>
                     </tr>
                     <tr>
@@ -127,17 +127,22 @@
                     </tr>
                     <tr>
                         <td>
-                            <button onclick="DCopy()" title="Copy"><img src="Images/DG_copy.png"></button>
+                            <button onclick="DCopy()" title="Copy (Ctrl+C)"><img src="Images/DG_copy.png"></button>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <button onclick="DPaste()" title="Paste"><img src="Images/DG_paste.png"></button>
+                            <button onclick="DCopy(true)" title="Cut (Ctrl+X)"><img src="Images/DG_cut.png"></button>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <button onclick="DPaste(true)" title="Paste as Link"><img src="Images/DG_paste_link.png"></button>
+                            <button onclick="DPaste()" title="Paste (Ctrl+V)"><img src="Images/DG_paste.png"></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="DPaste(true)" title="Paste as Link (Ctrl+Shift+V)"><img src="Images/DG_paste_link.png"></button>
                         </td>
                     </tr>
                 </table>
@@ -170,10 +175,14 @@
                     Submit
                 </button>
             </div>
-            <div class="checkbox" onclick="TransferCheckboxClick('click-checkbox')">
-                <input id="click-checkbox" type="checkbox" class="click" onclick="ToggleTRErrors()" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
+            <div class="checkbox-wrapper submit-related" onclick="TransferCheckboxClick('parse-checkbox')">
+                <input id="parse-checkbox" type="checkbox" class="click" onclick="ToggleTRErrors()" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
             </div>
-            <p class="check-text" style="color: darkgray; text-shadow: 3px 3px black; cursor: pointer;" onclick="TransferCheckboxClick('click-checkbox')" onmouseover="TransferCheckboxStyling('click-checkbox', true);" onmouseleave="TransferCheckboxStyling('click-checkbox', false);" title="If my parser is incorrect, you can still use your tellraw in this system">Ignore tellraw parse errors</p>
+            <p class="checkbox-label-text submit-related" onclick="TransferCheckboxClick('parse-checkbox')" onmouseover="TransferCheckboxStyling('parse-checkbox', true);" onmouseleave="TransferCheckboxStyling('parse-checkbox', false);" title="If my parser is incorrect, you can still use your tellraw in this system">Ignore tellraw parse errors</p>
+            <div class="checkbox-wrapper submit-related" onclick="TransferCheckboxClick('auto-checkbox')">
+                <input id="auto-checkbox" type="checkbox" class="click" onclick="ToggleAutoSubmitLine()" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
+            </div>
+            <p class="checkbox-label-text submit-related" onclick="TransferCheckboxClick('auto-checkbox')" onmouseover="TransferCheckboxStyling('auto-checkbox', true);" onmouseleave="TransferCheckboxStyling('auto-checkbox', false);" title="When active, the UI will update and save as you type">Auto-Submit Changes</p>
             <a onclick="ShowHide(7, event)" style="float: right; margin-top:19px; padding-right: 19px">hide</a>
             <div style="display:block;"></div>
             <div id="7">

@@ -122,9 +122,10 @@ function isChild(parent, childQuery) {
     return false;
 }
 
-//hidden via a collapsed parent
-function isHidden(dia) {
+//hidden via a collapsed parent; the expand parameter REQUIRES a RefreshMainWindow() call
+function isHidden(dia, expand = false) {
     if(!document.querySelector('span.text[seq="' + dia.seqNum + '"]')) {
+        if(expand) dia.collapsed = false;
         return true;
     }
     if(dia.tellraw == 'ROOT' || dia.parent.tellraw == 'ROOT') {
@@ -132,8 +133,10 @@ function isHidden(dia) {
     }
     let curr = dia;
     while(curr.parent) {
-        if(curr.parent.collapsed == true)
+        if(curr.parent.collapsed == true) {
+            if(expand) curr.parent.collapsed = false;
             return true;
+        }
         curr = curr.parent;
     }
     return false;
