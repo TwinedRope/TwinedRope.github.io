@@ -3,21 +3,33 @@
  * /tellraw @p {"text":"","extra":[{"text":"[","color":"white"},{"text":"Jeffrey Gaydos","color":"aqua","hoverEvent":{"action":"show_text", "value":"AKA Twined_Rope"}},{"text":"]: Hello and welcome to the ","color":"white"},{"text":"Keep on the Shadowfell","color":"gold","hoverEvent":{"action":"show_text", "value":"A map related to a D&D lvl 1 adventure"}},{"text":" map! Yes, I am ","color":"white"},{"text":"Twined_Rope","color":"blue","hoverEvent":{"action":"show_text", "value":"AKA Jeffrey Gaydos"}},{"text":", the creator of the tellraw generator. Check it out!\n","color":"white"},{"text":"-Continue-","color":"dark_green","clickEvent":{"action":"run_command", "value":"say continue"}}]}
  */
 
-function ImportTellrawCode(dialogue = false, TRInput = undefined) {
+const alertLvl = {
+    all: 3,
+    fatal: 2,
+    none: 1
+};
+
+const nonFatalBeforeMessage = "The tellraw code you entered does not appear to be correct for Minecraft. ";
+const nonFatalAfterMessage = "\n\nThis error can be ignored using the \"Ignroe tellraw parse errors\" checkbox.";
+const fatalAfterMessage = "\n\nThis error can NOT be ignored by this tool";
+
+function ImportTellrawCode(dialogue = false, TRInput = undefined, alertLevel = alertLvl.all) {
     var input = TRInput ? TRInput : document.getElementById("input").value;
     if(input.indexOf("tellraw") != 0 && input.indexOf("tellraw") != 1) {
-        alert("The tellraw code you entered is not able to be properly parsed. Check for syntax errors.");
-        return;
+        if(alertLevel == alertLvl.all) {
+            alert(nonFatalBeforeMessage + "Message: [Expected \"tellraw\" keyword]." + nonFatalAfterMessage);
+            return;
+        }
     } else {
         input = input.slice(8 + input.indexOf("tellraw")); //remove "tellraw", the space, and the "/" if present
     }
 
     if(input.indexOf("@") != 0) {
-        alert("The tellraw code you entered is not able to be properly parsed. Check for syntax errors.");
+        if(alertLevel == alertLvl.all) alert(nonFatalBeforeMessage + "Message: [Expected \"@\" for target selector]" + nonFatalAfterMessage);
         return;
     } else if(input[input.indexOf("@") + 2] == '[') {
         if(input.indexOf("]") == -1) {
-            alert("The tellraw code you entered is not able to be properly parsed. Check for syntax errors.");
+            if(alertLevel == alertLvl.all) alert(nonFatalBeforeMessage + "Message: [Expected \"]\" to close the target selector]" + nonFatalAfterMessage);
             return;
         } else {
             input = input.slice(input.indexOf("]") + 2);
@@ -30,7 +42,7 @@ function ImportTellrawCode(dialogue = false, TRInput = undefined) {
     try {
         TRJ = JSON.parse(input);
     } catch {
-        alert("The tellraw code you entered is not able to be properly parsed. Check for syntax errors.");
+        if(alertLevel >= alertLvl.fatal) alert("The tellraw JSON object could not be parsed; check for a missing brace or comma." + fatalAfterMessage);
         return;
     }
 
