@@ -75,16 +75,20 @@ function TranslateToHTML(item, index) {
     outputHTMLString += HTMLString; //kept in string type for performance reasons
 }
 
-function RefreshOutput() {
+function RefreshOutput(outputElement = undefined) {
     if(outputBox != undefined) {
         outputHTMLString = '';
-        outputBox.innerHTML = '';
+        outputElement ? outputElement.innerHTML = '' : outputBox.innerHTML = '';
         outputArray.forEach(TranslateToHTML);
-        outputBox.appendChild(document.createRange().createContextualFragment(outputHTMLString));
+        outputElement ?
+            outputElement.appendChild(document.createRange().createContextualFragment(outputHTMLString)) :
+            outputBox.appendChild(document.createRange().createContextualFragment(outputHTMLString));
         PostProcessFormats();
-        for(var i = 0; i < outputBox.childElementCount; i++) {
-            if(AddBreaks(outputBox.children[i]))
-                i++;
+        if(!outputElement) {
+            for(var i = 0; i < outputBox.childElementCount; i++) {
+                if(AddBreaks(outputBox.children[i]))
+                    i++;
+            }
         }
         PerformanceWarnings();
     }
@@ -234,7 +238,7 @@ function DownloadMCFunctionFile() {
             code += document.querySelector(".tellraw-output").value
             var blob = new Blob([code], {type: "text/plain"});
             var autoLink = document.createElement("a");
-            switch((""+ num).length) {
+            switch(("" + num).length) {
                 case 1:
                     autoLink.download = "TG_00" + num + ".mcfunction";
                 break;

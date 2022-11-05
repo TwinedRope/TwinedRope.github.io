@@ -5,7 +5,7 @@ class DialogueObject {
         this.tellraw = tellraw;
         this.children = children;
         this.parent = parent;
-        if(seqNum) {
+        if(seqNum || seqNum === 0) {
             this.seqNum = seqNum;
         } else {
             this.seqNum = sequenceNum;
@@ -39,14 +39,17 @@ function FindBySeqNum(dia, seq, link = false) {
     }
 }
 
-function FindBySeqNumElement(seq) {
+function FindBySeqNumElement(seq, all = false) {
     let texts = document.querySelectorAll("#main-window p span.text");
+    let elements = [];
     for(var i = 0; i < texts.length; i++) {
-        if(texts[i].getAttribute("seq") == seq && texts[i].getAttribute("link") != texts[i].getAttribute("seq")) {
-            return texts[i];
+        if(texts[i].getAttribute("seq") == seq && (all || (texts[i].getAttribute("link") != texts[i].getAttribute("seq")))) {
+            if(!all)
+                return texts[i];
+            elements.push(texts[i]);
         }
     }
-    return undefined;
+    return elements.length == 0 ? undefined : elements; //return undefined to maintain backwards compatibility
 }
 
 function FindAllLinkedElements(seq) {
@@ -95,9 +98,9 @@ function DiaToJSON(dia) {
     return diaJSON;
 }
 
-function JSONToDia(diaJSON, parent) {
+function JSONToDia(diaJSON, parent, dragSideEffect) {
     let diaChildren = [];
-    let dia = new DialogueObject(diaJSON.tellraw, diaChildren, parent, diaJSON.NPC, diaJSON.link, diaJSON.collapsed, diaJSON.seqNum);
+    let dia = new DialogueObject(diaJSON.tellraw, diaChildren, parent, diaJSON.NPC, diaJSON.link, diaJSON.collapsed, diaJSON.seqNum, !dragSideEffect);
     dia.conditions.scores = diaJSON.conditions.scores;
     dia.conditions.random = diaJSON.conditions.random;
     dia.conditions.custom = diaJSON.conditions.custom;
@@ -109,11 +112,11 @@ function JSONToDia(diaJSON, parent) {
 }
 
 function isChild(parent, childQuery) {
-    if(childQuery.tellraw == 'ROOT') {
+    if(childQuery.seqNum == 0) {
         return false;
     }
     let child = childQuery;
-    while(child.parent.tellraw != 'ROOT') {
+    while(child.parent.seqNum != 0) {
         if(child.parent.seqNum == parent.seqNum && child.parent.link.toString() == parent.link.toString()) {
             return true;
         }
@@ -128,7 +131,7 @@ function isHidden(dia, expand = false) {
         if(expand) dia.collapsed = false;
         return true;
     }
-    if(dia.tellraw == 'ROOT' || dia.parent.tellraw == 'ROOT') {
+    if(dia.seqNum == 0 || dia.parent.seqNum == 0) {
         return false;
     }
     let curr = dia;
@@ -140,4 +143,12 @@ function isHidden(dia, expand = false) {
         curr = curr.parent;
     }
     return false;
+}
+
+function isDeleted(seqNum) {
+    if(seqNum == 0)
+        return false;
+    if(document.querySelector('span.text[seq="' + seqNum + '"]'))
+        return false;
+    return true;
 }

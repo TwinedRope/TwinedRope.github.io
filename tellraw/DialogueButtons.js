@@ -10,7 +10,7 @@ function DAdd() {
 }
 
 function DAddPromise() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         DisableButtons();
         if(selected == undefined) {
             alert("Please select a dialogue line as the parent to add to.");
@@ -25,19 +25,10 @@ function DAddPromise() {
             let addition = new DialogueObject('/tellraw @p {"text":"","extra":[{"text":"__"}]}', [], selected, !selected.NPC, false);
             selected.children.splice(0, 0, addition);
         }
+        selected = selected.children[0];
         RefreshMainWindow();
-    
-        //select the newly added element automatically
-        let allText = document.querySelectorAll("#main-window p.line span.text");
-        let newElement;
-        for(var i = 0; i < allText.length; i++) {
-            if(allText[i].getAttribute("seq") == sequenceNum - 1) {
-                newElement = allText[i];
-                break;
-            }
-        }
+        let newElement = FindBySeqNumElement(selected.seqNum);
         Select(newElement);
-        RefreshMainWindow();
         updateUndoList();
         resolve();
     });
@@ -101,10 +92,15 @@ function DPaste(aslink = false, dragSideEffect = false) {
         }
         navigator.permissions.query({ name: "clipboard-read" }).then((result) => {
             if (result.state == "granted" || result.state == "prompt") {
-                navigator.clipboard.readText().then((data) => {
-                    let pasteDia = JSONToDia(JSON.parse(data), mySelected);
+                navigator.clipboard.readText().then(async (data) => {
+                    let pasteDia = JSONToDia(JSON.parse(data), mySelected, (dragSideEffect || isDeleted(copiedSeqNum)));
                     if(aslink && pasteDia.link) {
                         alert("Cannot paste a link as link. Use the regular paste button instead.");
+                        reject();
+                        return;
+                    }
+                    if(aslink && isDeleted(pasteDia.seqNum)) {
+                        alert("Connot paste as link after cutting. Parent line no longer exists.");
                         reject();
                         return;
                     }
@@ -113,7 +109,7 @@ function DPaste(aslink = false, dragSideEffect = false) {
                         reject();
                         return;
                     }
-                    if(mySelected.tellraw == "ROOT" && !pasteDia.NPC) {
+                    if(mySelected.seqNum == 0 && !pasteDia.NPC) {
                         alert("You cannot paste a player dialogue on the root node.");
                         reject();
                         return;
@@ -159,12 +155,13 @@ function DPaste(aslink = false, dragSideEffect = false) {
                         pasteDia.children = []; //required for "link"s
                         pasteDia.link = copiedSeqNum;
                     }
-                    if(!aslink) {
-                        //we need new sequence numbers for any objects that were copied and pasted
+                    if(!aslink && !dragSideEffect && !isDeleted(pasteDia.seqNum)) {
+                        //we need new sequence numbers for any objects that were copied and pasted; unless we dragged it or cut it
                         CreateNewSeqNums(pasteDia);
                     }
                     RefreshMainWindow();
-                    Deselect();
+                    //Deselect();
+                    UnstyleElementSelected(mySelectedElement);
                     if(!dragSideEffect)
                         updateUndoList();
                     resolve();
@@ -182,7 +179,7 @@ function CollapseExpandAll(collapsed) {
 }
 
 function CollapseExpandRecursion(collapsed, dia) {
-    if(dia.tellraw != 'ROOT')
+    if(dia.seqNum != 0)
         dia.collapsed = collapsed;
     dia.children.forEach((child) => {
         CollapseExpandRecursion(collapsed, child);
@@ -212,6 +209,8 @@ function CreateNewSeqNums(parent) {
 //call this after every dialogue state change
 function updateUndoList() {
     //requires a (recursive) deep copy of the current dialogue object
+    let saveSeqNum = selected.seqNum;
+    let saveLink = selected.link;
     if(dialogueHistory.length < 100) {
         undoIndex++;
         dialogueHistory.splice(undoIndex, 100, RecursiveDeepCopyDialogue(dialogue));
@@ -224,6 +223,7 @@ function updateUndoList() {
     }
     UpdateUndoerButtonStates();
     console.log("Updated Undo List: " + undoIndex);
+    selected = FindBySeqNum(dialogue, saveSeqNum, saveLink);
 }
 
 function RecursiveDeepCopyDialogue(dia) {
@@ -246,8 +246,9 @@ function Undo() {
     if(undoIndex <= 0)
         return;
     undoIndex--;
-    dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
-    DeepCopyAddParentRefs(dialogue);
+    Object.assign(dialogue, dialogueHistory[undoIndex]);
+    //dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
+    //DeepCopyAddParentRefs(dialogue);
     console.log("Undid: " + undoIndex);
     RefreshMainWindow();
     UpdateUndoerButtonStates();
@@ -257,8 +258,11 @@ function Redo() {
     if(undoIndex >= dialogueHistory.length - 1)
         return;
     undoIndex++;
-    dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
-    DeepCopyAddParentRefs(dialogue);
+    Object.assign(dialogue, dialogueHistory[undoIndex]);
+    // dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
+    // DeepCopyAddParentRefs(dialogue);
+    if(isDeleted(selected.seqNum))
+        Select(document.querySelector("#main-window span.root"))
     console.log("Redid: " + undoIndex);
     RefreshMainWindow();
     UpdateUndoerButtonStates();
@@ -363,11 +367,9 @@ function MapButtonsDown(event) {
                 if(selected.collapsed) {
                     let seqNumTarget = selected.children[0].seqNum;
                     ToggleCollapse(undefined, selected);
-                    setTimeout(() => {
-                        FindBySeqNumElement(seqNumTarget).click();
-                    }, 1);
+                    Select(FindBySeqNumElement(seqNumTarget));
                 } else {
-                    FindBySeqNumElement(selected.children[0].seqNum).click();
+                    Select(FindBySeqNumElement(selected.children[0].seqNum));
                 }
             }
             buttonStates.right = 1;

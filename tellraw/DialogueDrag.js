@@ -74,11 +74,9 @@ function Drop(element) {
                 selected = oldSelected;
                 selectedElement = oldSelectedElement;
                 DDeleteRecursive(true);
-                Deselect();
                 updateUndoList(); //we have "supressed" the updates from the original paste and delete to make it explicit here, and only when the drag succeeds
             }).catch(() => {
                 //ignore errors - errors handled in paste function
-                Deselect();
             });
         } else {
             alert("You cannot drag a dialogue line to one of its children.");

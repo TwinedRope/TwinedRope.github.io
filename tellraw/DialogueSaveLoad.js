@@ -1,3 +1,5 @@
+const delayToLetGifLoadMsec = 100;
+
 function Save() {
     document.getElementById("save-loading").style.display = "inline";
     let aPromise = function aPromiseFunc(){
@@ -19,7 +21,7 @@ function Save() {
                 autoLink.click();
             
                 resolve();
-            }, 100);
+            }, delayToLetGifLoadMsec);
         });
     };
     aPromise().then(() => {
@@ -57,6 +59,7 @@ async function Export(standalone) {
         document.querySelector("#MCFunc-downloads p").remove();
     let loadingIconId = standalone ? "export-loading-standalone" : "export-loading";
     document.getElementById(loadingIconId).style.display = "inline";
+    document.getElementById(loadingIconId).
     childlessPlayerResponse = false;
     let aPromise = function aPromiseFunc(){
         return new Promise((resolve, reject) => {
@@ -101,7 +104,7 @@ async function Export(standalone) {
                 underPercentageWarned = false;
 
                 resolve();
-            }, 100);
+            }, delayToLetGifLoadMsec);
         });
     };
     await aPromise().then(() => {
@@ -112,7 +115,7 @@ async function Export(standalone) {
         document.getElementById(loadingIconId).style.display = "none";
     });
 
-    ZipMCFuncs(standalone);
+    await ZipMCFuncs(standalone);
 }
 
 //TODO: figure out the optimal configuration for minecraft datapacks, think ease of use, ease of installation, ease of update, ease of addition
@@ -159,7 +162,7 @@ var transitions = []; //action file contents
  */
 function CreateMCFunctions(dia) {
     let result = [];
-    if(dia.tellraw == "ROOT") {
+    if(dia.seqNum == 0) {
         dia.children.forEach((child) => {
             result = result.concat(CreateMCFunctions(child));
         });

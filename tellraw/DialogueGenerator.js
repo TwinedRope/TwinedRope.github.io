@@ -31,9 +31,6 @@ function DialogueInit() {
     RefreshMainWindow();
 
     let element = document.querySelector(".text");
-    element.style.border = "1px dashed white";
-    element.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
-    element.style.margin = "0px";
     Select(element);
 
     document.querySelector("#action button").click();
@@ -101,6 +98,7 @@ function RenderDialogue(dia, indent = 0) {
     let baseLeft = indent * 22;
     if(indent == 0) { //denotes root
         diatext.classList.add('root');
+        diatext.innerText = 'Root';
     } else {
         dialine.appendChild(connector);
         dialine.appendChild(document.createElement("BR"));
@@ -143,18 +141,27 @@ function RenderDialogue(dia, indent = 0) {
     diatext.classList.add("text");
     diatext.setAttribute("seq", dia.seqNum);
     diatext.setAttribute("link", dia.link);
+    
+    // vv Strict Ordering vv //
+    diatext.addEventListener("click", function(event) {ClickLine(event)});
     if(dia.link)
         diatext.addEventListener("click", function() {DoubleClickDetector()});
-    diatext.addEventListener("click", function(event) {ClickLine(event)});
+    // ^^ Strict Ordering ^^ //
+
     diatext.addEventListener("mousedown", function(event) {ActivateDrag(event)});
     diatext.addEventListener("mouseover", function(event) {DropZone(event)});
 
     document.getElementById("main-window").appendChild(dialine);
 
-    Select(document.getElementById("main-window").lastChild.lastChild);
+    if(!diatext.classList.contains('root')) {
+        const outputElements = TellrawToHTML(dia.tellraw, alertLvl.all)
+        outputElements.forEach((el) => {
+            diatext.appendChild(el);
+        });
+    }
 
     if(!dia.collapsed) {
-        dia.children.forEach((el) => {
+        dia.children.forEach(async (el) => {
             RenderDialogue(el, indent);
         });
     }
@@ -164,20 +171,23 @@ function RefreshMainWindow(dragSideEffect = false) {
     document.getElementById("main-window").innerHTML = '';
     let tempSelected = selected;
     RenderDialogue(dialogue);
-    if(!dragSideEffect && (!tempSelected || isHidden(tempSelected))) {
-        document.getElementById("main-window").lastChild.lastChild.click();
+    if(!selected || isDeleted(selected.seqNum)) {
+        Select(document.querySelector("#main-window span.root"));
     } else {
-        document.querySelector('span.text[seq="' + tempSelected.seqNum + '"][link="' + tempSelected.link + '"]').click();
+        Select(FindBySeqNumElement(selected.seqNum));
     }
+    // if(!dragSideEffect && (!tempSelected || isHidden(tempSelected))) {
+    //     //document.getElementById("main-window").lastChild.lastChild.click();
+    // } else {
+    //     document.querySelector('span.text[seq="' + tempSelected.seqNum + '"][link="' + tempSelected.link + '"]').click();
+    // }
 }
 
 function DocClick(event) {
     try {
-        if(event.target.id == "main-window" || event.target.parentElement.id == "main-window" || event.target.parentElement.parentElement.id == "main-window" || event.target.parentElement.parentElement.parentElement.id == "main-window") {
-            document.querySelectorAll("p > span.text").forEach((element) => {
-                element.style.border = "none";
-                element.style.backgroundColor = "rgba(0, 0, 0, 0)";
-                element.style.margin = "1px";
+        if(event.target.id == "main-window" || event.target.parentElement.id == "main-window") {
+            document.querySelectorAll("p > span.text").forEach(async (element) => {
+                UnstyleElementSelected(element);
                 Deselect();
             });
         }
@@ -186,10 +196,32 @@ function DocClick(event) {
     }
 }
 
+//the responsibilitiies of select are complete; i.e. the front-end and the back-end will change their "selection states"
+//you may not need a full resfresh for certain operations
 function Select(element) {
+    if(selected && isDeleted(selected.seqNum))
+        selected = undefined;
+    if(selected) {
+        if(selected.link) {
+            FindBySeqNumElement(selected.seqNum, true).forEach((el) => {
+                UnstyleElementSelected(el);
+            });
+        } else {
+            UnstyleElementSelected(FindBySeqNumElement(selected.seqNum));
+        }
+    }
     selected = FindBySeqNum(dialogue, element.getAttribute("seq"), element.getAttribute("link"));
     selectedElement = element;
-    if(!element.classList.contains("root")) {
+
+    if(element.classList.contains("root")) {
+        outputBox.classList.add("disabled");
+        document.getElementById("input").setAttribute("disabled", "");
+        document.getElementById("parse-checkbox").setAttribute("disabled", "");
+        document.getElementById("auto-checkbox").setAttribute("disabled", "");
+        document.querySelectorAll(".submit-related").forEach((el) => { el.classList.add("disabled") });
+        outputBox.innerText = "ROOT";
+        document.getElementById("input").value = "ROOT";
+    } else {
         document.getElementById("input").removeAttribute("disabled");
         document.getElementById("submit-line").removeAttribute("disabled");
         document.getElementById("submit-line").parentElement.classList.remove("disabled");
@@ -202,18 +234,7 @@ function Select(element) {
             //first run fails since outputBox needs to be defined
         }
         document.getElementById("input").value = selected.tellraw;
-        SubmitLine();
-    } else {
-        element.innerText = "Root";
-        outputBox.classList.add("disabled");
-        document.getElementById("input").setAttribute("disabled", "");
-        document.getElementById("parse-checkbox").setAttribute("disabled", "");
-        document.getElementById("auto-checkbox").setAttribute("disabled", "");
-        document.querySelectorAll(".submit-related").forEach((el) => { el.classList.add("disabled") });
-        outputBox.innerText = "ROOT";
-        document.getElementById("input").value = "ROOT";
     }
-
     if(selected.link) {
         let linkParent = FindBySeqNumElement(selected.link);
         if(linkParent)
@@ -222,7 +243,11 @@ function Select(element) {
         document.querySelectorAll("span.text.link-highlight").forEach((element) => {
             element.classList.remove("link-highlight");
         });
+        FindAllLinkedElements(selected.seqNum).forEach((element) => {
+            element.classList.add("link-highlight");
+        })
     }
+    StyleElementSelected(element);
     RefreshActionList();
     RefreshConditionList();
 }
@@ -233,9 +258,6 @@ function Deselect() {
     document.getElementById("input").setAttribute("disabled", "");
     document.getElementById("submit-line").setAttribute("disabled", "");
     document.getElementById("submit-line").parentElement.classList.add("disabled");
-    document.querySelectorAll("span.text.link-highlight").forEach((element) => {
-        element.classList.remove("link-highlight");
-    });
     try {
         outputBox.classList.add("disabled");
     } catch(e) {
@@ -259,26 +281,30 @@ function ClickLine(event) {
     if(event.target.parentElement.tagName != "P") {
         element = event.target.parentElement;
     }
-    setTimeout(() => {
-        element.style.border = "1px dashed white";
-        element.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
-        element.style.margin = "0px";
-        Select(element);
-    }, 1);
+    
+    Select(element);
 }
 
-function SubmitLine(userActivated = false) {
-    if(!ImportTellrawCode(true, undefined, alertLvl.fatal && !ignoreTRErrors)) {
-        return;
-    }
-    let newTellraw = document.getElementById("input").value;
-    let newOutput = "";
-    outputBox.childNodes.forEach((element) => {
-        if(element.tagName != "BR") {
-            newOutput += element.outerHTML;
-        }
+function StyleElementSelected(element) {
+    element.style.border = "1px dashed white";
+    element.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
+    element.style.margin = "0px";
+}
+
+function UnstyleElementSelected(element) {
+    element.style.border = "none";
+    element.style.backgroundColor = "rgba(0, 0, 0, 0)";
+    element.style.margin = "1px";
+    document.querySelectorAll("span.text.link-highlight").forEach((element) => {
+        element.classList.remove("link-highlight");
     });
-    selected.tellraw = newTellraw;
+}
+
+function SubmitLine(userActivated = false, alertLevel = alertLvl.all) {
+    selected.tellraw = document.getElementById("input").value;
+    var newOutput = TellrawToHTML(selected.tellraw, alertLevel).map((element) => {
+        return element.outerHTML;
+    }).join("");
 
     if(selected.link) {
         //update link parent
@@ -379,11 +405,8 @@ function DoubleClickDetector() {
         doubleClicker = 0;
         let tempSelected = selected;
         isHidden(FindBySeqNum(dialogue, selected.link), true);
-        RefreshMainWindow();
-        setTimeout(() => { //this timeout is required for an issue where the red dashed border appears after selection
-            Select(FindBySeqNumElement(tempSelected.link));
-            RefreshMainWindow();
-        }, 1);
+        let linkParent = FindBySeqNumElement(tempSelected.link);
+        Select(linkParent);
     }
 }
 

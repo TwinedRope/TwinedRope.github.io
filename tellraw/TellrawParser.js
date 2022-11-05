@@ -10,8 +10,80 @@ const alertLvl = {
 };
 
 const nonFatalBeforeMessage = "The tellraw code you entered does not appear to be correct for Minecraft. ";
-const nonFatalAfterMessage = "\n\nThis error can be ignored using the \"Ignroe tellraw parse errors\" checkbox.";
+const nonFatalAfterMessage = "\n\nThis error can be ignored using the \"Ignore tellraw parse errors\" checkbox.";
 const fatalAfterMessage = "\n\nThis error can NOT be ignored by this tool";
+
+function TellrawToHTML(tellraw, alertLevel = alertLevel.all) {
+    if(tellraw.indexOf("tellraw") != 0 && tellraw.indexOf("tellraw") != 1) {
+        if(alertLevel == alertLvl.all) {
+            alert(nonFatalBeforeMessage + "Message: [Expected \"tellraw\" keyword]." + nonFatalAfterMessage);
+            return;
+        }
+    } else {
+        tellraw = tellraw.slice(8 + tellraw.indexOf("tellraw")); //remove "tellraw", the space, and the "/" if present
+    }
+
+    if(tellraw.indexOf("@") != 0) {
+        if(alertLevel == alertLvl.all) alert(nonFatalBeforeMessage + "Message: [Expected \"@\" for target selector]" + nonFatalAfterMessage);
+        return;
+    } else if(tellraw[tellraw.indexOf("@") + 2] == '[') {
+        if(tellraw.indexOf("]") == -1) {
+            if(alertLevel == alertLvl.all) alert(nonFatalBeforeMessage + "Message: [Expected \"]\" to close the target selector]" + nonFatalAfterMessage);
+            return;
+        } else {
+            tellraw = tellraw.slice(tellraw.indexOf("]") + 2);
+        }
+    } else {
+        tellraw = tellraw.slice(3);
+    }
+
+    var TRJ;
+    try {
+        TRJ = JSON.parse(tellraw);
+    } catch {
+        if(alertLevel >= alertLvl.fatal) alert("The tellraw JSON object could not be parsed; check for a missing brace or comma." + fatalAfterMessage);
+        return;
+    }
+
+    var TRO = [];
+    TRO.push({});
+    TRO[0].value =  RawToGenOutput(TRJ, 0);
+    if(TRJ['extra']) {
+        for(var i = 0; i < TRJ['extra'].length; i++) {
+            TRO.push({});
+            TRO[i + 1].value = RawToGenOutput(TRJ['extra'][i]);
+        }
+    }
+    var outputCharacterElements = [];
+    TRO.forEach((item, index) => {
+        var character = document.createElement("SPAN");
+        character.setAttribute("index", index);
+        if(item.value.text == ' ')
+            character.classList.add("space");
+        character.innerHTML = item.value.text == ' ' ? '' : item.value.text;
+        if(item.value.format)
+            item.value.format.forEach((ft) => character.classList.add(ft));
+        if(item.value.event[0]) {
+            character.classList.add("click-event");
+            character.addEventListener("click", (event) => ShowClickEvent(event, index));
+            character.addEventListener("onmouseenter", () => HintClickEvent());
+            character.addEventListener("onmouseleave", () => RemoveShowClickEvent());
+        } else if(item.value.event[1]) {
+            character.classList.add("hover-event");
+            character.addEventListener("click", (event) => ShowHoverEvent(event, index));
+            character.addEventListener("onmouseout", () => RemoveShowHoverEvent());
+        }
+        if((cursorPosition == 0 && index == 0 || cursorPosition - 1 == index && lastSelection.length == 0) || IsInLastSelection(index)) {
+            character.classList.add("cursor-selected");
+            character.style.border = `1px solid ${item.value.color}`;
+        }
+        character.style.color = item.value.color;
+        if(item.value.text == '\n')
+            outputCharacterElements.push(document.createElement("BR"));
+        outputCharacterElements.push(character);
+    });
+    return outputCharacterElements;
+}
 
 function ImportTellrawCode(dialogue = false, TRInput = undefined, alertLevel = alertLvl.all) {
     var input = TRInput ? TRInput : document.getElementById("input").value;
