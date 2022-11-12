@@ -1,4 +1,5 @@
 var dialogueHistory = [dialogue = new DialogueObject('ROOT', [], undefined, false, false, false, 0, false)];
+var selectionHistory = [0]; //does not record all selection changes, only when the undo list is updated
 var undoIndex = 0;
 
 function DAdd() {
@@ -224,11 +225,14 @@ function updateUndoList() {
     let saveLink = selected.link;
     if(dialogueHistory.length < 100) {
         undoIndex++;
+        selectionHistory.splice(undoIndex, 100, selected.seqNum);
         dialogueHistory.splice(undoIndex, 100, RecursiveDeepCopyDialogue(dialogue));
         DeepCopyAddParentRefs(dialogueHistory[undoIndex]);
     } else {
-        undoIndex++;
+        //undoIndex++;
+        selectionHistory.splice(0, 1);
         dialogueHistory.splice(0, 1);
+        selectionHistory.splice(undoIndex, 100, selected.seqNum);
         dialogueHistory.splice(undoIndex, 100, RecursiveDeepCopyDialogue(dialogue));
         DeepCopyAddParentRefs(dialogueHistory[undoIndex]);
     }
@@ -262,6 +266,7 @@ function Undo() {
     DeepCopyAddParentRefs(dialogue);
     console.log("Undid: " + undoIndex);
     RefreshMainWindow();
+    Select(FindBySeqNumElement(selectionHistory[undoIndex]));
     UpdateUndoerButtonStates();
 }
 
@@ -276,6 +281,7 @@ function Redo() {
         Select(document.querySelector("#main-window span.root"))
     console.log("Redid: " + undoIndex);
     RefreshMainWindow();
+    Select(FindBySeqNumElement(selectionHistory[undoIndex]));
     UpdateUndoerButtonStates();
 }
 
