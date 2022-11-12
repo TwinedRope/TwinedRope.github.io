@@ -15,9 +15,11 @@ function DAddPromise() {
         if(selected == undefined) {
             alert("Please select a dialogue line as the parent to add to.");
             reject();
+            return;
         } else if(selected.link) {
             alert("You cannot add a child dialogue line to a link. Add it to the parent dialogue line instead.");
             reject();
+            return;
         } else {
             if(selected.collapsed) {
                 selected.collapsed = false;
@@ -29,6 +31,7 @@ function DAddPromise() {
         RefreshMainWindow();
         let newElement = FindBySeqNumElement(selected.seqNum);
         Select(newElement);
+        SubmitLine(false); //we don't want to update the undo list in here, but out here in the main promise function
         updateUndoList();
         resolve();
     });
@@ -71,6 +74,8 @@ function DCopy(cut = false) {
     }).then(() => {
         if(cut)
             DDeleteRecursive();
+    }).catch(() => {
+        return; //ignore errors
     });
     copied = true;
     copiedSeqNum = selected.seqNum;
@@ -165,12 +170,18 @@ function DPaste(aslink = false, dragSideEffect = false) {
                     if(!dragSideEffect)
                         updateUndoList();
                     resolve();
+                }).catch(() => {
+                    return; //ignore errors
                 });
             } else {
                 alert("Your browser does not allow websites (such as this one) to access your clipboard. Please allow this to use the paste feature.");
             }
+        }).catch(() => {
+            return; //ignore errors
         });
-    });
+    }).catch(() => {
+        return; //ignore errors
+    });;
 }
 
 function CollapseExpandAll(collapsed) {
@@ -246,9 +257,9 @@ function Undo() {
     if(undoIndex <= 0)
         return;
     undoIndex--;
-    Object.assign(dialogue, dialogueHistory[undoIndex]);
-    //dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
-    //DeepCopyAddParentRefs(dialogue);
+    //Object.assign(dialogue, dialogueHistory[undoIndex]);
+    dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
+    DeepCopyAddParentRefs(dialogue);
     console.log("Undid: " + undoIndex);
     RefreshMainWindow();
     UpdateUndoerButtonStates();
@@ -258,9 +269,9 @@ function Redo() {
     if(undoIndex >= dialogueHistory.length - 1)
         return;
     undoIndex++;
-    Object.assign(dialogue, dialogueHistory[undoIndex]);
-    // dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
-    // DeepCopyAddParentRefs(dialogue);
+    //Object.assign(dialogue, dialogueHistory[undoIndex]);
+    dialogue = RecursiveDeepCopyDialogue(dialogueHistory[undoIndex]);
+    DeepCopyAddParentRefs(dialogue);
     if(isDeleted(selected.seqNum))
         Select(document.querySelector("#main-window span.root"))
     console.log("Redid: " + undoIndex);
