@@ -76,7 +76,7 @@ function Drop(element) {
                 DDeleteRecursive(true);
                 updateUndoList(); //we have "supressed" the updates from the original paste and delete to make it explicit here, and only when the drag succeeds
             }).catch(() => {
-                //ignore errors - errors handled in paste function
+                return; //ignore errors - error handling found in paste function
             });
         } else {
             alert("You cannot drag a dialogue line to one of its children.");
