@@ -212,6 +212,7 @@ function Select(element) {
     }
     selected = FindBySeqNum(dialogue, element.getAttribute("seq"), element.getAttribute("link"));
     selectedElement = element;
+    selectedElement.scrollIntoViewIfNeeded();
 
     if(element.classList.contains("root")) {
         //outputBox.classList.add("disabled");

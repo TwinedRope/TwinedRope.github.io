@@ -33,6 +33,7 @@ function Drag(event) {
             if(dragTime == 11) {
                 selected = FindBySeqNum(dialogue, dragging.getAttribute("seq"), dragging.getAttribute("link"));
                 selectedElement = dragging;
+                selectedElement.scrollIntoViewIfNeeded();
                 DCopy();
             }
             mousePos = {
@@ -81,5 +82,6 @@ function Drop(element) {
         } else {
             alert("You cannot drag a dialogue line to one of its children.");
         }
+        selectedElement.scrollIntoViewIfNeeded();
     }
 }
