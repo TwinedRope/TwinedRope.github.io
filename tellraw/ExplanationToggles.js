@@ -1,8 +1,8 @@
 var expToggles = new Array();
 
-function ToggleExp(id) {
+function ToggleExp(id, init = false) {
     while(id >= expToggles.length) {
-        expToggles.push(false);
+        expToggles.push(init);
     }
     
     if(expToggles[id]) {

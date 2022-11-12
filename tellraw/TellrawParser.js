@@ -14,22 +14,20 @@ const nonFatalAfterMessage = "\n\nThis error can be ignored using the \"Ignore t
 const fatalAfterMessage = "\n\nThis error can NOT be ignored by this tool";
 
 function TellrawToHTML(tellraw, alertLevel = alertLevel.all) {
+    const errorMessages = [];
     if(tellraw.indexOf("tellraw") != 0 && tellraw.indexOf("tellraw") != 1) {
         if(alertLevel == alertLvl.all) {
-            alert(nonFatalBeforeMessage + "Message: [Expected \"tellraw\" keyword]." + nonFatalAfterMessage);
-            return;
+            errorMessages.push(nonFatalBeforeMessage + "Message: [Expected \"tellraw\" keyword]." + nonFatalAfterMessage);
         }
     } else {
         tellraw = tellraw.slice(8 + tellraw.indexOf("tellraw")); //remove "tellraw", the space, and the "/" if present
     }
 
     if(tellraw.indexOf("@") != 0) {
-        if(alertLevel == alertLvl.all) alert(nonFatalBeforeMessage + "Message: [Expected \"@\" for target selector]" + nonFatalAfterMessage);
-        return;
+        if(alertLevel == alertLvl.all) errorMessages.push(nonFatalBeforeMessage + "Message: [Expected \"@\" for target selector]" + nonFatalAfterMessage);
     } else if(tellraw[tellraw.indexOf("@") + 2] == '[') {
         if(tellraw.indexOf("]") == -1) {
-            if(alertLevel == alertLvl.all) alert(nonFatalBeforeMessage + "Message: [Expected \"]\" to close the target selector]" + nonFatalAfterMessage);
-            return;
+            if(alertLevel == alertLvl.all) errorMessages.push(nonFatalBeforeMessage + "Message: [Expected \"]\" to close the target selector]" + nonFatalAfterMessage);
         } else {
             tellraw = tellraw.slice(tellraw.indexOf("]") + 2);
         }
@@ -41,8 +39,8 @@ function TellrawToHTML(tellraw, alertLevel = alertLevel.all) {
     try {
         TRJ = JSON.parse(tellraw);
     } catch {
-        if(alertLevel >= alertLvl.fatal) alert("The tellraw JSON object could not be parsed; check for a missing brace or comma." + fatalAfterMessage);
-        return;
+        if(alertLevel >= alertLvl.fatal) errorMessages.push("The tellraw JSON object could not be parsed; check for a missing brace or comma." + fatalAfterMessage);
+        return errorMessages;
     }
 
     var TRO = [];

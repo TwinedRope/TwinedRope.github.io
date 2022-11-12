@@ -68,7 +68,7 @@
                 Dialogue Generator (WIP)
             </h1>
             <img class="enchanted-book-icon" src="Images/Enchanted_Book.gif" alt="enchanted book">
-            <a style="display:inline-block;" onclick="ToggleExp(2, event)">show explanation</a>
+            <a style="display:inline-block;" onclick="ToggleExp(2, true)">show explanation</a>
             <br>
             <div class="hidden" id="2">
                 <p>This tool should be used to generate the entire dialogue for an NPC. If you are just looking for a Tellraw Generator, check out <a href="https://twinedrope.github.io/tellraw/TellrawGenerator.html">this link</a> for my creation or a more <a href="https://www.minecraftjson.com/">offical one</a>. </p>
@@ -169,16 +169,12 @@
                 </strong>
                 <p id="obfWarning" style="display: none; color: #ffff55;"> WARNING: performance decreased from obfuscated text. <a onclick="ToggleObfuscatedAnimation()">Toggle Animation</a></p>
             </label>
-            <textarea id="input" oninput="SetOutdated()" onclick="UpdateCursorPositionClick(event)" onkeyup="KeyUpEventUpdate(event)" onkeydown="KeyDownEventUpdate(event)" onfocus="FocusEventHighlight(event)" onselect="HandleOutputSelection(event)"></textarea>
+            <textarea id="input" oninput="AutoSubmitLine()"></textarea>
             <div class="button" onclick="SubmitLine(true)">
                 <button id="submit-line">
                     Submit
                 </button>
             </div>
-            <div class="checkbox-wrapper submit-related" onclick="TransferCheckboxClick('parse-checkbox')">
-                <input id="parse-checkbox" type="checkbox" class="click" onclick="ToggleTRErrors()" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
-            </div>
-            <p class="checkbox-label-text submit-related" onclick="TransferCheckboxClick('parse-checkbox')" onmouseover="TransferCheckboxStyling('parse-checkbox', true);" onmouseleave="TransferCheckboxStyling('parse-checkbox', false);" title="If my parser is incorrect, you can still use your tellraw in this system">Ignore tellraw parse errors</p>
             <div class="checkbox-wrapper submit-related" onclick="TransferCheckboxClick('auto-checkbox')">
                 <input id="auto-checkbox" type="checkbox" class="click" onclick="ToggleAutoSubmitLine()" onmouseover="overridecCheckboxClick = true;" onmouseleave="overridecCheckboxClick = false;">
             </div>
@@ -191,6 +187,10 @@
                 </label>
                  <!--<p id="cursor" style="position: relative; top: 35px; font-size: 30px; height: 0px; margin-top: -20px;">|</p>-->
                 <div class="current-output"></div>
+                <div id="tellraw-parse-errors-wrapper" style="display: none;">
+                    <label>Tellraw Parse Errors:</label>
+                    <div id="tellraw-parse-errors" style="color:darkred; font-weight: bold;" class="black-box"></div>
+                </div>
             </div>
             <div style="display: inline-block;" id="click-notification-box"></div>
             <div style="display: inline-block;" id="hover-notification-box"></div>

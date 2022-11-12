@@ -44,15 +44,14 @@ var autoSubmit = false;
 var autoSubmitIntervalID;
 function ToggleAutoSubmitLine() {
     autoSubmit = !autoSubmit;
-    console.log("audo submit: " + (autoSubmit ? "on" : "off"));
+    if(autoSubmit)
+        SubmitLine(true, alertLvl.none);
+    console.log("auto submit: " + (autoSubmit ? "on" : "off"));
+}
+
+function AutoSubmitLine() {
     if(autoSubmit) {
-        autoSubmitIntervalID = setInterval(() => {
-            console.log("submitting...");
-            SubmitLine();
-        }, 500);
-    } else {
-        clearInterval(autoSubmitIntervalID);
-        autoSubmitEventListenter = undefined;
+        SubmitLine(true, alertLvl.all);
     }
 }
 
@@ -154,10 +153,11 @@ function RenderDialogue(dia, indent = 0) {
     document.getElementById("main-window").appendChild(dialine);
 
     if(!diatext.classList.contains('root')) {
-        const outputElements = TellrawToHTML(dia.tellraw, alertLvl.all)
+        const outputElements = HandleTellrawParseErrors(TellrawToHTML(dia.tellraw, alertLvl.all));
         outputElements.forEach((el) => {
             diatext.appendChild(el);
         });
+        HandleMainWindowTellrawParseError(outputElements, dia.tellraw, diatext);
     }
 
     if(!dia.collapsed) {
@@ -214,9 +214,8 @@ function Select(element) {
     selectedElement = element;
 
     if(element.classList.contains("root")) {
-        outputBox.classList.add("disabled");
+        //outputBox.classList.add("disabled");
         document.getElementById("input").setAttribute("disabled", "");
-        document.getElementById("parse-checkbox").setAttribute("disabled", "");
         document.getElementById("auto-checkbox").setAttribute("disabled", "");
         document.querySelectorAll(".submit-related").forEach((el) => { el.classList.add("disabled") });
         outputBox.innerText = "ROOT";
@@ -225,7 +224,6 @@ function Select(element) {
         document.getElementById("input").removeAttribute("disabled");
         document.getElementById("submit-line").removeAttribute("disabled");
         document.getElementById("submit-line").parentElement.classList.remove("disabled");
-        document.getElementById("parse-checkbox").removeAttribute("disabled");
         document.getElementById("auto-checkbox").removeAttribute("disabled");
         document.querySelectorAll(".submit-related").forEach((el) => { el.classList.remove("disabled") });
         try {
@@ -259,7 +257,7 @@ function Deselect() {
     document.getElementById("submit-line").setAttribute("disabled", "");
     document.getElementById("submit-line").parentElement.classList.add("disabled");
     try {
-        outputBox.classList.add("disabled");
+        //outputBox.classList.add("disabled");
     } catch(e) {
         //first run fails since outputBox needs to be defined
     }
@@ -300,11 +298,49 @@ function UnstyleElementSelected(element) {
     });
 }
 
+function HandleTellrawParseErrors(parsedObjectOrErrors) {
+    if(!parsedObjectOrErrors || parsedObjectOrErrors.length == 0) {
+        return [];
+    }
+    if(parsedObjectOrErrors[0].toString() === parsedObjectOrErrors[0]) {
+        document.querySelector("#tellraw-parse-errors-wrapper").style.display = "block";
+        document.querySelector("#tellraw-parse-errors").innerHTML = ''; //remove all children
+        parsedObjectOrErrors.forEach((errorMsg) => {
+            const child = document.createElement("P");
+            child.innerText = errorMsg;
+            child.style.color = "inherit";
+            document.querySelector("#tellraw-parse-errors").appendChild(child);
+        });
+        return [];
+    }
+    document.querySelector("#tellraw-parse-errors-wrapper").style.display = "none";
+    return parsedObjectOrErrors; //now we know it is successful
+}
+
+function HandleMainWindowTellrawParseError(outputElements, badTellraw, diatext) {
+    if(outputElements.length == 0) {
+        diatext.innerHTML = '';
+        const errorChild = document.createElement("SPAN");
+        const badSpan = document.createElement("SPAN");
+        badSpan.style.color = "red";
+        badSpan.innerText = badTellraw;
+        errorChild.innerText = "Could not parse: ";
+        errorChild.title = "Check the error messages below";
+        diatext.appendChild(errorChild);
+        diatext.appendChild(badSpan);
+        return false;
+    }
+    return true;
+}
+
 function SubmitLine(userActivated = false, alertLevel = alertLvl.all) {
     selected.tellraw = document.getElementById("input").value;
-    var newOutput = TellrawToHTML(selected.tellraw, alertLevel).map((element) => {
+    var newOutput = HandleTellrawParseErrors(TellrawToHTML(selected.tellraw, alertLevel)).map((element) => {
         return element.outerHTML;
     }).join("");
+
+    if(!HandleMainWindowTellrawParseError(newOutput, selected.tellraw, FindBySeqNumElement(selected.seqNum)))
+        return;
 
     if(selected.link) {
         //update link parent
@@ -331,12 +367,14 @@ function SubmitLine(userActivated = false, alertLevel = alertLvl.all) {
     }
     selectedElement.innerHTML = newOutput;
     outputBox.classList.remove("disabled");
-    if(userActivated) //there are many scenarios where the system itself needs to submit a line using this function
+    if(userActivated) { //there are many scenarios where the system itself needs to submit a line using this function
+        outputBox.innerHTML = newOutput;
         updateUndoList();
+    }
 }
 
 function SetOutdated() {
-    outputBox.classList.add("disabled");
+    //outputBox.classList.add("disabled");
 }
 
 function TransferClickToText(event) {
@@ -375,11 +413,6 @@ function ExpandExpandable(event) {
     } else {
         document.querySelector(".expandable-content." + id).style.display = "none";
     }
-}
-
-var ignoreTRErrors = false;
-function ToggleTRErrors() {
-    ignoreTRErrors = !ignoreTRErrors;
 }
 
 function TransferClickToFirstChild(event) {
